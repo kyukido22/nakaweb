@@ -1,0 +1,135 @@
+body {
+	background:#ffffff;
+	margin:0px;
+	padding:0px;
+}
+
+a{text-decoration:none;border-bottom:solid 1px;}
+a:hover{ border:none;}
+.padding{padding:20px;}
+
+blockquote{
+}
+
+blockquote0{background:white;
+	 border:solid 1px black;
+	 font-weight:bold;
+	 font-family:Arial, Helvetica, sans-serif;
+     margin-top:-10px;
+     margin-bottom:-10px;
+     margin-right:0px;
+     margin-left:0px;	
+	 padding:0px;		
+	 font-size:14px;
+	 text-align:left;
+	 color:blue}
+
+div.container {
+	margin:0px auto;
+	width:650px;
+}
+	 
+.errortext {
+     font-weight:bold;
+	 font-family:Arial, Helvetica, sans-serif;	
+	 font-size:12px;
+     text-align:left;	 
+	 color:red;
+}
+
+div.content {
+	position:relative; float:left;
+	margin:25px 0;
+	background:#fff;
+	width:400px;
+	left:125px;
+
+}
+div.header{position:relative; float:left; left:3px; background:#fff; padding-bottom:40px; }
+
+div.utilities {
+	background:#000000;
+	color:#999;
+	display:block;
+	float:left;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+	height:30px;
+	line-height:30px;
+	position:relative;
+	width:100%;
+}
+div.utilities ul {
+	list-style:none;
+	margin: 0 auto;
+	padding:0;
+	width:960px;
+}
+div.utilities ul li {
+color: #999;
+	float:left;
+	list-style:none;
+	margin: 0 10px 0 10px;
+	padding:0;
+	position:relative;
+}
+div.utilities ul li a {
+	text-decoration:none;
+	border:none;
+	color:#be2226;
+}
+div.utilities ul li a:hover, div.utilities ul li.active a {
+	border-bottom:solid 1px;
+	color:#999;
+}
+.top,.bottom{ position:relative; float:left; width:400px; height:5px; font-size:1px; line-height:1px; background:url(../../images/bg-top.gif) no-repeat; }
+
+.bottom{background:url(../../images/bg-bottom.gif) no-repeat;}
+.middle{ position:relative; float:left; width:100%;background:url(../../images/bg-middle.gif); padding-bottom:15px;}
+
+	h1{color:#161511;
+	font-size:24px;
+	line-height:36px;
+	font-weight:normal;
+	margin: 0 0 15px 0;}
+	 
+p{ position:relative; float:left; width:100%;color:#393835;
+	margin: 0 0 5px 0;}
+	input.text {
+	color:#666;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	font-size:13px;
+	font-style:italic;
+	margin-bottom:4px;
+	margin-left:10px;
+	padding:2px;
+	width:55%;
+	
+}
+input.text:focus {color:#000000;}
+.top{ height:35px; line-height:35px; font-size:13px;}
+.top p{ text-indent:10px; line-height:35px;}
+.top p a{ color:#999; font-family:Arial, Helvetica, sans-serif;}
+
+.sumit {margin-left: 25px; margin-top: 15px; margin-bottom: 15px;}
+
+
+label{
+	display: block; width: 25%; float: left; position: relative; left: 25px; top: 5px; margin-bottom: 5px; font-family:Arial, Helvetica, sans-serif; font-size: 13px;
+} 
+
+errorlabel{
+	display: block;
+	width: 100%; 
+	float: left; 
+	position: relative; 
+	top: 0px; 
+	margin-bottom: 0px;
+	font-weight:bold; 
+	font-family:Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #8b1212;
+} 
+
+tr.ReportDetailsOddDataRow {  font-family: Tahoma, Arial, sans-serif; font-size: 12px; background-color: #99FF99; padding: 5px;color: #666666;}
+tr.ReportDetailsEvenDataRow {  font-family: Tahoma, Arial, sans-serif; font-size: 12px; background-color: #FF99CC; padding: 5px;color: #666666;}
