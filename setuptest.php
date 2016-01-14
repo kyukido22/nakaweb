@@ -23,6 +23,7 @@ $results = new stdClass();
 $results -> success = FALSE;
 $results -> errortext = null;
 $cancontinue = TRUE;
+$_SESSION['recordteststep'] = 0;
 
 // active students and their ranks
 $theq = " select distinct clt_description,ct.clt_index,clt_seq";

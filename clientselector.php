@@ -6,7 +6,6 @@ session_start();
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
 require '/var/www/phplib/PDOconnectDB.php';
-require '/var/www/phplib/cleanuserinput.php';
 require '/var/www/phplib/wc2lib.php';
 
 
