@@ -1,11 +1,5 @@
 <?php
-/* Iris api
- *
- * author: john cantin - apr 2015
- *
- *
- *
- */
+
 session_start();
 
 //erase any old seesion vars
@@ -84,6 +78,12 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 				$_SESSION["usercompany"] = $row -> company;
 				$_SESSION["userlanguage"] = $row -> thelanguage;
 				$_SESSION['clientdefaults']["schoollogo"] = $row -> schoollogo;
+				$_SESSION["treasurer"] = $row -> treasurer;
+				if ($_SESSION["treasurer"] == false){
+					$_SESSION["treasurermenu"]='<a href="recordpayment.php">Receive Payments</a>&nbsp;&nbsp;';
+				}
+					
+				
 				$results -> success = TRUE;
 
 				//update lastvisit
@@ -101,7 +101,7 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 				}
 
 				header('Location: clientselector.php');
-
+				exit ;
 			}
 		}
 	}
