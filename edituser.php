@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION["userid"])) {
+	header('Location: login.php');
+	exit;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';

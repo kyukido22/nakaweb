@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION["userid"])) {
+	header('Location: login.php');
+	exit ;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
@@ -100,7 +104,7 @@ try {
 
 $_SESSION['clientdefaults']['pagetitle'] = 'Edit User';
 $_SESSION['buttontextschool'] = ' Save ';
-$_SESSION['cancelbutton']='&nbsp;&nbsp;<a href="school.php"><input type="button" value=" Cancel " /></a>';
+$_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input type="button" value=" Cancel " /></a>';
 $_SESSION['editstudentsbutton'] = '';
 
 $thehtml = LoadTheHTML('page_editschool', array('header_schooldetails' => $schooldata), //

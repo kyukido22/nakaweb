@@ -1,7 +1,10 @@
 <?php
 
-
 session_start();
+if (!isset($_SESSION["userid"])) {
+    header('Location: login.php');
+    exit ;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
@@ -36,7 +39,7 @@ function SetSessionVals($clientuserrecord, $PDOconn, $logname) {
         $_SESSION["clientdefaults"]["dbname"] = $client -> dbname;
         $_SESSION["clientdefaults"]["host"] = $client -> host;
         $_SESSION["clientdefaults"]["fullname"] = $client -> fullname;
-		$_SESSION["othercssorjs"]='';
+        $_SESSION["othercssorjs"] = '';
     }
 
     if ($cancontinue) {
@@ -50,8 +53,9 @@ function SetSessionVals($clientuserrecord, $PDOconn, $logname) {
 }
 
 /*
- * if this program is called with GET params for tag and client (must have been self called)
- * then, check that the user has rights to that (to prevent cheating) and put them in.
+ * if this program is called with GET params for tag and client (must have been
+ * self called) then, check that the user has rights to that (to prevent
+ * cheating) and put them in.
  */
 
 $PDOconn = PDOconnect('nakaweb', $_SESSION["dbhost"], $logname);
@@ -86,12 +90,12 @@ if (key_exists('clientid', $_GET)) {
     }
 } else {
     /*
-     * if this program is called without GET params (must have been called by login.php)
+     * if this program is called without GET params (must have been called by
+     * login.php)
      * then...
      *      if user only has one tag just put them in
      *      if user has multiple tags then display a list for them to select
      */
-
 
     // check if user has access to more than one account
 
@@ -122,7 +126,8 @@ if (key_exists('clientid', $_GET)) {
 
         } else {
 
-            // multiple tags, so need to display one of the account selection screens
+            // multiple tags, so need to display one of the account selection
+            // screens
             logit($logname, '  user has multiple tag values');
             $_SESSION["multiaccount"] = TRUE;
 
@@ -142,87 +147,36 @@ if (key_exists('clientid', $_GET)) {
                 $cancontinue = FALSE;
             }
             if ($cancontinue) {
-                if ($pdoquery -> rowCount() == 1) {
-                    logit($logname, '  user has multiple tags accross one client');
-                    //mulitiple accounts/geos but only one client, so we can make a prettier menu for them
 
-                    $_SESSION["clientdefaults"]["clientid"] = $row -> clientid;
-                    $_SESSION["clientdefaults"]["host"] = $row -> host;
-                    $_SESSION["clientdefaults"]["dbname"] = $row -> dbname;
-                    $dblinker = "left outer join (select * from dblink('dbname='" . $row -> dbname . "' host='" . $row -> host . "' user=pg_admin_php password=adminsms_pg8',";
+                logit($logname, '  user has access to multiple clients');
+                $theq = 'select c.clientid, fullname, ' . $_SESSION["userid"] . ' as userid';
+                $theq .= ' from client c';
+                $theq .= ' join clientuser cu on c.clientid = cu.clientid';
+                $theq .= " where userid = :userid";
+                $theq .= ' order by fullname';
+                try {
+                    $pdoquery = $PDOconn -> prepare($theq);
+                    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+                    $pdoquery -> execute(array(':userid' => $_SESSION["userid"]));
+                } catch (PDOException $e) {
+                    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+                    $cancontinue = FALSE;
+                }
 
-                    $theq = "select tag,COALESCE(acname,g1name,g2name,g3name,g4name,'No Desc Found') as acname,";
-                    $theq .= '  b.clientid,taglevel';
-                    $theq .= ' from clientuser a';
-                    $theq .= ' join client b on a.clientid = b.clientid';
-                    $theq .= $dblinker;
-                    $theq .= "     'select acnumber,acname from account')";
-                    $theq .= '     AS t1(acnumber varchar(20),';
-                    $theq .= '     acname varchar(50))) c on a.tag=acnumber and taglevel=5';
-                    $theq .= $dblinker;
-                    $theq .= "     'select geo1code,manager from geotabl1')";
-                    $theq .= '     AS t1(geo1code varchar(15),';
-                    $theq .= '     g1name varchar(50))) g1 on a.tag=geo1code and taglevel=1';
-                    $theq .= $dblinker;
-                    $theq .= "     'select geo2code,manager from geotabl2')";
-                    $theq .= '     AS t1(geo2code varchar(15),';
-                    $theq .= '     g2name varchar(50))) g2 on a.tag=geo2code and taglevel=2';
-                    $theq .= $dblinker;
-                    $theq .= "     'select geo3code,manager from geotabl3')";
-                    $theq .= '     AS t1(geo3code varchar(15),';
-                    $theq .= '     g3name varchar(50))) g3 on a.tag=geo3code and taglevel=3';
-                    $theq .= $dblinker;
-                    $theq .= "     'select geo4code,manager from geotabl4')";
-                    $theq .= '     AS t1(geo4code varchar(15),';
-                    $theq .= '     g4name varchar(50))) g4 on a.tag=geo4code and taglevel=4';
-                    $theq .= ' where a.client_id = :clientid';
-                    $theq .= '  and a.user_id = :userid';
-                    $theq .= ' order by acname, tag';
-                    try {
-                        $pdoquery = $PDOconn -> prepare($theq);
-                        $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-                        $pdoquery -> execute(array(//
-                        ':clientid' => $_SESSION["clientdefaults"]["clientid"], //
-                        ':userid' => $_SESSION["userid"]));
-                    } catch (PDOException $e) {
-                        logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-                        $cancontinue = FALSE;
-                    }
+                $_SESSION['clientdefaults']['fullname'] = 'Select a School';
 
-                    $row = $pdoquery -> fetch();
+                $thehtml = LoadTheHTML('page_clientselect', array('detail_clients' => $pdoquery -> fetchAll()), $logname, 1, 1);
 
-                } else {
-                    // accounts range over multiple clients
-                    logit($logname, '  user has multiple tags accross multiple clients');
-                    $theq = 'select c.clientid, fullname, '.$_SESSION["userid"].' as userid';
-                    $theq .= ' from client c';
-                    $theq .= ' join clientuser cu on c.clientid = cu.clientid';
-                    $theq .= " where userid = :userid";
-                    $theq .= ' order by fullname';
-                    try {
-                        $pdoquery = $PDOconn -> prepare($theq);
-                        $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-                        $pdoquery -> execute(array(':userid' => $_SESSION["userid"]));
-                    } catch (PDOException $e) {
-                        logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-                        $cancontinue = FALSE;
-                    }
+                if ($thehtml == '') {
+                    $results -> errortext = 'no HTML found at: ' . __LINE__;
+                    $cancontinue = FALSE;
+                }
+                echo $thehtml;
 
-                    $_SESSION['clientdefaults']['fullname']='Select a School';
-
-                    $thehtml = LoadTheHTML('page_clientselect', array('detail_clients' => $pdoquery -> fetchAll()), $logname, 1, 1);
-
-                    if ($thehtml == '') {
-                        $results -> errortext = 'no HTML found at: ' . __LINE__;
-                        $cancontinue = FALSE;
-                    }
-                    echo $thehtml;
-                } // multiple clients
             }
         }
     } // not a GET call
 }
-
 
 $totaltime = microtime(TRUE) - $starttime;
 

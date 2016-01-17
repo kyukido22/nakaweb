@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION["userid"])) {
+	header('Location: login.php');
+	exit;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
@@ -23,9 +27,9 @@ $results = new stdClass();
 $results -> success = FALSE;
 $results -> errortext = null;
 $cancontinue = TRUE;
-$_SESSION['recordteststep'] = 0;
+unset($_SESSION['testdetails']);
 
-// active students and their ranks
+// get list of possible arts
 $theq = " select distinct clt_description,ct.clt_index,clt_seq";
 $theq .= " from students s";
 $theq .= " join ranks r on s.stu_index=r.stu_index";

@@ -1,6 +1,35 @@
 <?php
 
+/*
+ * 
+select 
+student_type, last_name, first_name, middle_name, sex,
+  m_last_name, m_first_name, m_middle_name, f_last_name,
+  f_first_name, f_middle_name, primary_contact, address,
+  city, state, zip, birthday, start_date, phone1, phone1_type,
+  phone2, phone2_type, phone3, phone3_type, email, 
+  user_text_1, user_text_2, user_text_3, user_text_4, user_text_5,
+  user_date_1, user_date_2, user_date_3, user_date_4, user_date_5,
+  user_num_1, user_num_2, user_num_3, user_num_4, user_num_5,
+short_name as art,srk_seq as kup,test_date,fed_id
+
+ from students s
+join ranks r on s.stu_index=r.stu_index
+join sysdef.rank_names rn on rn.srk_index=r.srk_index
+join sysdef.class_type c on c.clt_index=rn.clt_index
+where last_name in ('Abatte','Abdallah','Byk','Warzynski')
+and current_rank=true
+ * 
+ */
+
+
+
 session_start();
+if (!isset($_SESSION["userid"])) {
+    header('Location: login.php');
+    exit ;
+}
+
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';

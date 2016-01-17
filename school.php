@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION["userid"])) {
+	header('Location: login.php');
+	exit;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
@@ -137,7 +141,6 @@ $_SESSION['buttontextschool'] = ' Edit School ';
 $_SESSION['clientdefaults']['pagetitle'] = 'School Details';
 $_SESSION['cancelbutton'] = '';
 $_SESSION['editstudentsbutton'] = '<form action="selectstudent.php"><input class="button" type="submit" value=" Students " /></form>';
-$_SESSION['recordteststep'] = 0;
 
 $thehtml = LoadTheHTML('page_school', array(//
 'header_schooldetails' => $schooldata, //
