@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!isset($_SESSION["userid"])) {
+	header('Location: login.php');
+	exit;
+}
 
 $starttime = microtime(TRUE);
 require '/var/www/phplib/logitv2.php';
@@ -58,11 +62,27 @@ try {
 //notes
 $theq = 'select * from notes ';
 $theq .= ' where stu_index=:stu_index';
+$theq .= " and employee<>'*MA'";
 $theq .= ' order by note_timestamp desc';
 try {
 	$pdoquerynotes = $dbconn -> prepare($theq);
 	$pdoquerynotes -> setFetchMode(PDO::FETCH_OBJ);
 	$pdoquerynotes -> execute(array(':stu_index' => $stu_index));
+} catch (PDOException $e) {
+	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+	$results -> errortext = $e -> getMessage();
+	$cancontinue = FALSE;
+}
+
+//medical alerts
+$theq = 'select * from notes ';
+$theq .= ' where stu_index=:stu_index';
+$theq .= " and employee='*MA'";
+$theq .= ' order by note_timestamp desc';
+try {
+	$pdoquerymed = $dbconn -> prepare($theq);
+	$pdoquerymed -> setFetchMode(PDO::FETCH_OBJ);
+	$pdoquerymed -> execute(array(':stu_index' => $stu_index));
 } catch (PDOException $e) {
 	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
 	$results -> errortext = $e -> getMessage();
@@ -114,6 +134,7 @@ $thehtml = LoadTheHTML('page_main', array(//
 'detail_contractsa' => $contractsa, //
 'header_contractsi' => $contractsi, //
 'detail_contractsi' => $contractsi, //
+'detail_medicalalert' => $pdoquerymed->fetchAll(), //
 'detail_notes' => $pdoquerynotes -> fetchAll()//
 ), $logname, 1, 1);
 
