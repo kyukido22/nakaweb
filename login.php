@@ -86,8 +86,10 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 				$_SESSION["userlanguage"] = $row -> thelanguage;
 				$_SESSION['clientdefaults']["schoollogo"] = $row -> schoollogo;
 				$_SESSION["treasurer"] = $row -> treasurer;
-				if ($_SESSION["treasurer"] == false){
+				if ($_SESSION["treasurer"] == true){
 					$_SESSION["treasurermenu"]='<a href="recordpayment.php">Receive Payments</a>&nbsp;&nbsp;';
+				} else{
+				    $_SESSION["treasurermenu"]='';
 				}
 					
 				
