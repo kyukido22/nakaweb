@@ -2,16 +2,22 @@
 
 session_start();
 if (!isset($_SESSION["userid"])) {
-	header('Location: login.php');
-	exit;
+    header('Location: login.php');
+    exit ;
 }
 
 $starttime = microtime(TRUE);
-require '/var/www/phplib/logitv2.php';
-require '/var/www/phplib/PDOconnectDB.php';
-require '/var/www/phplib/cleanuserinput.php';
-require '/var/www/phplib/wc2lib.php';
-
+if (PHP_OS == 'WINNT') {
+    require 'C:\inetpub\phplib\logitv2.php';
+    require 'C:\inetpub\phplib\PDOconnectDB.php';
+    require 'C:\inetpub\phplib\cleanuserinput.php';
+    require 'C:\inetpub\phplib\wc2lib.php';
+} else {
+    require '/var/www/phplib/logitv2.php';
+    require '/var/www/phplib/PDOconnectDB.php';
+    require '/var/www/phplib/cleanuserinput.php';
+    require '/var/www/phplib/wc2lib.php';
+}
 static $logname = 'school';
 startthelog($logname, TRUE);
 
@@ -53,14 +59,14 @@ $theq .= " schoolzip text,";
 $theq .= " schoolphone text)";
 
 try {
-	$pdoquery = $dbconn -> prepare($theq);
-	$pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-	$pdoquery -> execute();
-	$schooldata = $pdoquery -> fetchAll();
+    $pdoquery = $dbconn -> prepare($theq);
+    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+    $pdoquery -> execute();
+    $schooldata = $pdoquery -> fetchAll();
 } catch (PDOException $e) {
-	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-	$results -> errortext = $e -> getMessage();
-	$cancontinue = FALSE;
+    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+    $results -> errortext = $e -> getMessage();
+    $cancontinue = FALSE;
 }
 
 $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
@@ -74,14 +80,14 @@ $theq .= ' where clientid=:schoolid';
 $theq .= " and superuser=true";
 $theq .= ' order by lastname,firstname';
 try {
-	$pdoquery = $dbconn -> prepare($theq);
-	$pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-	$pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
-	$superuserdata = $pdoquery -> fetchAll();
+    $pdoquery = $dbconn -> prepare($theq);
+    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+    $pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
+    $superuserdata = $pdoquery -> fetchAll();
 } catch (PDOException $e) {
-	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-	$results -> errortext = $e -> getMessage();
-	$cancontinue = FALSE;
+    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+    $results -> errortext = $e -> getMessage();
+    $cancontinue = FALSE;
 }
 
 // defuser info
@@ -95,21 +101,25 @@ $theq .= ' where clientid=:schoolid';
 $theq .= " and superuser=false";
 $theq .= ' order by locked,lastname,firstname';
 try {
-	$pdoquery = $dbconn -> prepare($theq);
-	$pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-	$pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
-	$userdata = $pdoquery -> fetchAll();
+    $pdoquery = $dbconn -> prepare($theq);
+    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+    $pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
+    $userdata = $pdoquery -> fetchAll();
 } catch (PDOException $e) {
-	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-	$results -> errortext = $e -> getMessage();
-	$cancontinue = FALSE;
+    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+    $results -> errortext = $e -> getMessage();
+    $cancontinue = FALSE;
 }
 
 // test info
 $theq = 'select testdate,clt_description,i.invoiceid,invoicedate,invoiceamount,paymentreceived,login';
 $theq .= ' from tests t';
 $theq .= ' join invoices i on i.invoiceid=t.invoiceid';
-$theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^','";
+if (PHP_OS == 'WINNT') {
+    $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=password','";
+} else {
+    $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^','";
+}
 $theq .= " 		select clt_index, clt_seq, short_name, clt_description from sysdef.class_type') as (";
 $theq .= " 		clt_index integer,";
 $theq .= " 		clt_seq integer,";
@@ -119,22 +129,23 @@ $theq .= ' left join users u on u.userid=i.receivedby';
 $theq .= ' where t.schoolid=:schoolid';
 $theq .= ' order by testdate desc, i.invoiceid desc';
 try {
-	$pdoquery = $dbconn -> prepare($theq);
-	$pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-	$pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
-	$testdata = $pdoquery -> fetchAll();
+    $pdoquery = $dbconn -> prepare($theq);
+    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+    $pdoquery -> execute(array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]));
+    $testdata = $pdoquery -> fetchAll();
 } catch (PDOException $e) {
-	logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-	$results -> errortext = $e -> getMessage();
-	$cancontinue = FALSE;
+    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+    $results -> errortext = $e -> getMessage();
+    $cancontinue = FALSE;
 }
 
 if ($_SESSION['superuser'] == true) {
-	$_SESSION['createnewuserbutton'] = '<form action="edituser.php" method="post">' . //
-	'<input type="hidden" name="userid" value="-1">' . //
-	'<input class="button" type="submit" value=" Add User " /></form>';
+    $_SESSION['createnewuserbutton'] = '<form action="edituser.php" method="post">' .
+    // //
+    '<input type="hidden" name="userid" value="-1">' . //
+    '<input class="button" type="submit" value=" Add User " /></form>';
 } else {
-	$_SESSION['createnewuserbutton'] = '';
+    $_SESSION['createnewuserbutton'] = '';
 }
 $_SESSION['buttontextuser'] = ' Edit User ';
 $_SESSION['buttontextschool'] = ' Edit School ';

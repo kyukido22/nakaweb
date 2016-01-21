@@ -7,10 +7,17 @@ if (!isset($_SESSION["userid"])) {
 }
 
 $starttime = microtime(TRUE);
-require '/var/www/phplib/logitv2.php';
-require '/var/www/phplib/PDOconnectDB.php';
-require '/var/www/phplib/cleanuserinput.php';
-require '/var/www/phplib/wc2lib.php';
+if (PHP_OS == 'WINNT') {
+    require 'C:\inetpub\phplib\logitv2.php';
+    require 'C:\inetpub\phplib\PDOconnectDB.php';
+    require 'C:\inetpub\phplib\cleanuserinput.php';
+    require 'C:\inetpub\phplib\wc2lib.php';
+} else {
+    require '/var/www/phplib/logitv2.php';
+    require '/var/www/phplib/PDOconnectDB.php';
+    require '/var/www/phplib/cleanuserinput.php';
+    require '/var/www/phplib/wc2lib.php';
+}
 
 static $logname = 'edituser';
 startthelog($logname, TRUE);
