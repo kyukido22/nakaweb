@@ -1,5 +1,7 @@
 <?php
 session_start();
 session_destroy();
-echo "Thank you for using the site."
+session_start();
+$_SESSION['errortext']='Your session timed out.';
+header('Location: login.php');
 ?>
