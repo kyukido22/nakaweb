@@ -45,7 +45,7 @@ function SetSessionVals($clientuserrecord, $PDOconn, $logname) {
         $_SESSION["clientdefaults"]["dbname"] = $client -> dbname;
         $_SESSION["clientdefaults"]["host"] = $client -> host;
         $_SESSION["clientdefaults"]["fullname"] = $client -> fullname;
-        $_SESSION["othercssorjs"] = '';
+        $_SESSION["clientdefaults"]["schoollogo"] = $client -> schoollogo;
     }
 
     if ($cancontinue) {
