@@ -109,7 +109,7 @@ try {
 	$cancontinue = FALSE;
 }
 
-$_SESSION['clientdefaults']['pagetitle'] = 'Edit User';
+$_SESSION['clientdefaults']['pagetitle'] = 'Edit School';
 $_SESSION['buttontextschool'] = ' Save ';
 $_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input type="button" value=" Cancel " /></a>';
 $_SESSION['editstudentsbutton'] = '';
