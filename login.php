@@ -31,6 +31,7 @@ $cancontinue = TRUE;
 $_SESSION['errortext'] = '';
 $_SESSION['clientdefaults'][0] = 0;
 $_SESSION['local'] = 'EN-US';
+$_SESSION["othercssorjs"] = '';
 
 //wc2 control database host
 $_SESSION["dbhost"] = 'localhost';
