@@ -41,94 +41,109 @@ $dbconn = PDOconnect('nakaweb', $_SESSION["dbhost"], $logname);
 GetTheHTMLs('EN-US', 0, $dbconn, $logname);
 
 if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
-	logit($logname, 'Login: ' . $_POST["LOGIN"] . ' Password: ' . $_POST["PASSWORD"]);
+    logit($logname, 'Login: ' . $_POST["LOGIN"] . ' Password: ' . $_POST["PASSWORD"]);
 
-	//check the username and password
-	$theq = " select *";
-	$theq .= " from users u";
-	$theq .= " join clientuser cu on u.userid=cu.userid";
-	$theq .= " join client c on c.clientid=cu.clientid";
-	$theq .= " where login=:login";
-	$theq .= "  and thepassword = :password";
-	$theq .= "  and c.locked=false";
-	$theq .= "  and u.locked=false";
-	try {
-		$pdoquery = $dbconn -> prepare($theq);
-		$pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-		$pdoquery -> execute(array(//
-		':login' => clean_user_input($_POST["LOGIN"]), //
-		':password' => clean_user_input($_POST["PASSWORD"])));
-		$row = $pdoquery -> fetch();
+    //check the username and password
+    $theq = " select *";
+    $theq .= " from users u";
+    $theq .= " join clientuser cu on u.userid=cu.userid";
+    $theq .= " join client c on c.clientid=cu.clientid";
+    $theq .= " where login=:login";
+    $theq .= "  and thepassword = :password";
+    $theq .= "  and c.locked=false";
+    $theq .= "  and u.locked=false";
+    try {
+        $pdoquery = $dbconn -> prepare($theq);
+        $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+        $pdoquery -> execute(array(//
+        ':login' => clean_user_input($_POST["LOGIN"]), //
+        ':password' => clean_user_input($_POST["PASSWORD"])));
+        $row = $pdoquery -> fetch();
 
-	} catch (PDOException $e) {
-		logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-		$cancontinue = FALSE;
-	}
+    } catch (PDOException $e) {
+        logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+        $cancontinue = FALSE;
+    }
 
-	if ($cancontinue) {
-		if (!$row) {
-			// not a valid user/password
-			//logit($logname, __LINE__);
-			$results -> errortext = 'Sorry, that username/password is invalid';
-		} else {
-			// valid user/password
-			if ($row -> locked == TRUE) {
-				//logit($logname, __LINE__);
-				$results -> errortext = 'Sorry, that user is locked';
-			} else {
-				// must be ok to let them in
-				//                logit($logname, __LINE__);
-				$_SESSION["userid"] = $row -> userid;
-				$_SESSION["userlogin"] = $row -> login;
-				$_SESSION["superuser"] = $row -> superuser;
-				$_SESSION["treasurer"] = $row -> treasurer;
-				$_SESSION["username"] = $row -> firstname . ' ' . $row -> lastname;
-				$_SESSION["usercompany"] = $row -> company;
-				$_SESSION["userlanguage"] = $row -> thelanguage;
-				$_SESSION['clientdefaults']["schoollogo"] = $row -> schoollogo;
-				$_SESSION["treasurer"] = $row -> treasurer;
-				if ($_SESSION["treasurer"] == true){
-					$_SESSION["treasurermenu"]='<a href="recordpayment.php">Receive Payments</a>&nbsp;&nbsp;';
-				} else{
-				    $_SESSION["treasurermenu"]='';
-				}
-					
-				
-				$results -> success = TRUE;
+    if ($cancontinue) {
+        if (!$row) {
+            // not a valid user/password
+            //logit($logname, __LINE__);
+            $results -> errortext = 'Sorry, that username/password is invalid';
+        } else {
+            // valid user/password
+            if ($row -> locked == TRUE) {
+                //logit($logname, __LINE__);
+                $results -> errortext = 'Sorry, that user is locked';
+            } else {
+                // must be ok to let them in
+                //                logit($logname, __LINE__);
+                $_SESSION["userid"] = $row -> userid;
+                $_SESSION["userlogin"] = $row -> login;
+                $_SESSION["superuser"] = $row -> superuser;
+                $_SESSION["treasurer"] = $row -> treasurer;
+                $_SESSION["username"] = $row -> firstname . ' ' . $row -> lastname;
+                $_SESSION["usercompany"] = $row -> company;
+                $_SESSION["userlanguage"] = $row -> thelanguage;
+                $_SESSION['clientdefaults']["schoollogo"] = $row -> schoollogo;
+                $_SESSION["treasurer"] = $row -> treasurer;
+                if ($_SESSION["treasurer"] == true) {
+                    $_SESSION["treasurermenu"] = '<a href="recordpayment.php">Receive Payments</a>&nbsp;&nbsp;';
+                } else {
+                    $_SESSION["treasurermenu"] = '';
+                }
 
-				//update lastvisit
-				$theq = " update users set lastvisit=now()";
-				$theq .= " where userid=:userid";
-				try {
-					$pdoquery = $dbconn -> prepare($theq);
-					$pdoquery -> execute(array(//
-					':userid' => $_SESSION["userid"]));
-					$row = $pdoquery -> fetch();
 
-				} catch (PDOException $e) {
-					logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-					$cancontinue = FALSE;
-				}
+                $results -> success = TRUE;
 
-				header('Location: clientselector.php');
-				exit ;
-			}
-		}
-	}
+                //update lastvisit
+                $theq = " update users set lastvisit=now()";
+                $theq .= " where userid=:userid";
+                try {
+                    $pdoquery = $dbconn -> prepare($theq);
+                    $pdoquery -> execute(array(//
+                    ':userid' => $_SESSION["userid"]));
+                    $row = $pdoquery -> fetch();
+
+                } catch (PDOException $e) {
+                    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+                    $cancontinue = FALSE;
+                }
+
+                //record loginhistory
+                //update lastvisit
+                $theq = " insert into loginhistory (userid,logints,loginfrom)";
+                $theq .= " values (:userid,now(), inet_client_addr())";
+                try {
+                    $pdoquery = $dbconn -> prepare($theq);
+                    $pdoquery -> execute(array(//
+                    ':userid' => $_SESSION["userid"]));
+                    $row = $pdoquery -> fetch();
+
+                } catch (PDOException $e) {
+                    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+                    $cancontinue = FALSE;
+                }
+
+                header('Location: clientselector.php');
+                exit ;
+            }
+        }
+    }
 } else {
-	$results -> success = TRUE;
-	$results -> errortext = 'someone looking at the login page';
+    $results -> success = TRUE;
+    $results -> errortext = 'someone looking at the login page';
 }
 
 if (!$results -> success) {
-	$_SESSION['errortext'] = $results -> errortext;
+    $_SESSION['errortext'] = $results -> errortext;
 }
 
 $thehtml = LoadTheHTML('page_login', null, $logname, 1, 1);
 
 if ($thehtml == '') {
-	$results -> errortext = 'no HTML found at: ' . __LINE__;
-	$cancontinue = FALSE;
+    $results -> errortext = 'no HTML found at: ' . __LINE__;
+    $cancontinue = FALSE;
 }
 
 $thehtml = str_replace('  ', '', $thehtml);
@@ -137,10 +152,10 @@ echo $thehtml;
 
 if (!$results -> success) {
 
-	logit($logname, "    **ERROR** something went wrong in " . __FILE__ . " Error text is: " . $results -> errortext);
+    logit($logname, "    **ERROR** something went wrong in " . __FILE__ . " Error text is: " . $results -> errortext);
 } else {
-	$totaltime = microtime(TRUE) - $starttime;
-	logit($logname, json_encode($results));
-	logit($logname, "    That took: " . $totaltime . " seconds");
+    $totaltime = microtime(TRUE) - $starttime;
+    logit($logname, json_encode($results));
+    logit($logname, "    That took: " . $totaltime . " seconds");
 }
 ?>
