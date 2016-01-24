@@ -113,11 +113,12 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
                 //record loginhistory
                 //update lastvisit
                 $theq = " insert into loginhistory (userid,logints,loginfrom)";
-                $theq .= " values (:userid,now(), inet_client_addr())";
+                $theq .= " values (:userid,now(), :loginfrom)";
                 try {
                     $pdoquery = $dbconn -> prepare($theq);
                     $pdoquery -> execute(array(//
-                    ':userid' => $_SESSION["userid"]));
+                    ':userid' => $_SESSION["userid"],//
+                    ':loginfrom'=>$_SERVER["REMOTE_ADDR"]));
                     $row = $pdoquery -> fetch();
 
                 } catch (PDOException $e) {
