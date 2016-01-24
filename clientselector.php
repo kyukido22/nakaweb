@@ -85,8 +85,6 @@ if (key_exists('clientid', $_GET)) {
             echo 'CHEATER!!!';
             exit ;
         } else {
-            logit($logname, '  user selected valid cid: ' . $_GET["CID"] . ' tag: ' . $_GET["TAG"]);
-
             SetSessionVals($row, $PDOconn, $logname);
         }
 
