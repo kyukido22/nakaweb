@@ -167,17 +167,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($_SESSION["activestudents"] as $key => $value) {
             // loop though all the students to see if they tested
             if (isset($_POST["tested" . $value['stu_index']])) {
+                logit($logname, $value['first_name'] . ' ' . $value['last_name'] . ' tested');
 
+                //load the array $studentdata for display
                 $studentdata[$i]['first_name'] = $value['first_name'];
                 $studentdata[$i]['last_name'] = $value['last_name'];
                 $studentdata[$i]['srk_description'] = $value['srk_description'];
                 $studentdata[$i]['stu_index'] = $value['stu_index'];
                 $studentdata[$i]['srk_seq'] = $value['srk_seq'];
                 $studentdata[$i]['srk_index'] = $value['srk_index'];
+                $studentdata[$i]['membershipfeecheckbox'] = '';
                 if ($_POST['skipped' . $value['stu_index']] == '') {
                     $skip = 1;
                 } else {
                     $skip = $_POST['skipped' . $value['stu_index']];
+                    logit($logname, '   they skipped ' . $skip);
+
                 }
 
                 //if moving from kup to dan need to skip "0"
@@ -193,8 +198,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // ranks skipped)
                 $newrankindex = array_search($studentdata[$i]['srk_index'], $rankindexs) - $skip;
 
+                //recordtestcheckbox is now being used to display the new rank
                 $studentdata[$i]['recordtestcheckbox'] = '<td>' . $ranknames[$newrankindex] . '</td>';
                 $studentdata[$i]['newsrk_index'] = $rankindexs[$newrankindex];
+
+                logit($logname, '  their new ranks is ' . $newrankindex . ' ' . $ranknames[$newrankindex]);
 
                 // calculate test fees
                 // rank seq counts down from 11 to 1 then negative for black belt
@@ -209,20 +217,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (isset($testfees[$j])) {
                         $totalfee = $totalfee + $testfees[$j];
                     }
+                    logit($logname, '  test fee is ' . $totalfee);
                 }
+
+                if (isset($_POST["membershipfee" . $value['stu_index']])) {
+                    $totalfee = $totalfee + 10;
+                    $studentdata[$i]['recordtestskipped'] = '<td>New Member</td>';
+                    logit($logname, '  they are also paying NAKA membership fees');
+                } else if ($_POST["testcount" . $value['stu_index']] < 2) {
+                    $studentdata[$i]['recordtestskipped'] = '<td><input name="nofeereason' . $value['stu_index'] . '"></td>';
+                    logit($logname, '  for some reason they are NOT paying NAKA membership fees');
+                } else {
+                    $studentdata[$i]['recordtestskipped'] = '<td>N/A</td>';
+                }
+
+                //recordtestskipped will display the test fee for this student
+                $studentdata[$i]['membershipfeecheckbox'] = '<td>$' . number_format($totalfee, 2, '.', '') . '</td>';
                 $_SESSION['testfees'] = $_SESSION['testfees'] + $totalfee;
-                $studentdata[$i]['recordtestskipped'] = '<td>$' . number_format($totalfee, 2, '.', '') . '</td>';
+
                 $i++;
             }
         }
 
-        //remember who tested
+        // set headers
         $_SESSION['testdetails'] = $studentdata;
         $_SESSION['step'] = 'recordit';
         $_SESSION['recordtestbuttontitle'] = ' Submit Test ';
         $_SESSION['recordtestcol1name'] = 'New Rank';
         $_SESSION['recordtestcol2name'] = 'Total Fee';
-        //	var_dump($_SESSION['testdetails']);
+        $_SESSION['recordtestcol3name'] = 'Why no<br>Member fee?';
     }
 } else {
     //	was a GET
@@ -238,12 +261,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // active students and their ranks
     $theq = " select s.stu_index,first_name,last_name,srk_description,srk_seq,";
-    $theq .= ' \'<td><input type="checkbox" name="tested\'||s.stu_index||\'"></td>\' as recordtestcheckbox,';
+    $theq .= ' \'<td><input type="checkbox" name="tested\'||s.stu_index||\'">\'||';
+    $theq .= ' \'<input type="hidden" name="testcount\'||s.stu_index||\'" value="\'||tests::integer||\'"></td>\' as recordtestcheckbox,';
+    $theq .= ' case when tests < 2';
+    $theq .= ' then \'<td><input type="checkbox" name="membershipfee\'||s.stu_index||\'" checked></td>\'';
+    $theq .= ' else \'<td>N/A</td>\'';
+    $theq .= ' end as membershipfeecheckbox,';
     $theq .= ' \'<td><input name="skipped\'||s.stu_index||\'"></td>\' as recordtestskipped, r.srk_index';
     $theq .= " from students s";
     $theq .= " join ranks r on s.stu_index=r.stu_index";
     $theq .= " join sysdef.rank_names rn on rn.srk_index=r.srk_index";
     $theq .= " join sysdef.class_type ct on ct.clt_index=rn.clt_index";
+    $theq .= " left join (select stu_index,count(*) as tests from ranks group by 1) rc on rc.stu_index=s.stu_index";
     $theq .= " where current_rank=true";
     $theq .= " and student_type in ('A','ANP','APC')";
     $theq .= " and ct.clt_index=:artid";
@@ -278,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['step'] = 'verifyit';
     $_SESSION['recordtestbuttontitle'] = ' Verify Ranks ';
     $_SESSION['recordtestcol1name'] = 'Tested';
-    $_SESSION['recordtestcol2name'] = 'Skipped';
+    $_SESSION['recordtestcol2name'] = 'Pay New<br>Member Fee';
+    $_SESSION['recordtestcol3name'] = 'Skipped';
 }
 
 $_SESSION['clientdefaults']['pagetitle'] = 'Record Test';
