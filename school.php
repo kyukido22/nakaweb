@@ -63,6 +63,14 @@ try {
     $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
     $pdoquery -> execute();
     $schooldata = $pdoquery -> fetchAll();
+    // remember the school address info for invoices
+    $_SESSION['schoolname'] = $schooldata[0] -> schoolname;
+    $_SESSION['schooladdress'] = $schooldata[0] -> schooladdress;
+    $_SESSION['schooladdress2'] = $schooldata[0] -> schooladdress2;
+    $_SESSION['schoolcity'] = $schooldata[0] -> schoolcity;
+    $_SESSION['schoolstate'] = $schooldata[0] -> schoolstate;
+    $_SESSION['schoolzip'] = $schooldata[0] -> schoolzip;
+    $_SESSION['schoolphone'] = $schooldata[0] -> schoolphone;
 } catch (PDOException $e) {
     logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
     $results -> errortext = $e -> getMessage();
