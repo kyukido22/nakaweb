@@ -80,19 +80,35 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
                 //                logit($logname, __LINE__);
                 $_SESSION["userid"] = $row -> userid;
                 $_SESSION["userlogin"] = $row -> login;
+                $_SESSION["useremail"] = $row -> email;
                 $_SESSION["superuser"] = $row -> superuser;
                 $_SESSION["treasurer"] = $row -> treasurer;
                 $_SESSION["username"] = $row -> firstname . ' ' . $row -> lastname;
                 $_SESSION["usercompany"] = $row -> company;
                 $_SESSION["userlanguage"] = $row -> thelanguage;
                 $_SESSION['clientdefaults']["schoollogo"] = $row -> schoollogo;
-                $_SESSION["treasurer"] = $row -> treasurer;
                 if ($_SESSION["treasurer"] == true) {
                     $_SESSION["treasurermenu"] = '<a href="recordpayment.php">Receive Payments</a>&nbsp;&nbsp;';
                 } else {
                     $_SESSION["treasurermenu"] = '';
                 }
 
+                // get tresurers email
+                $theq = " select email";
+                $theq .= " from users u";
+                $theq .= " where treasurer=true";
+                $theq .= "  and c.locked=false";
+                $theq .= "  and u.locked=false";
+                try {
+                    $pdoquery = $dbconn -> prepare($theq);
+                    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+                    $pdoquery -> execute();
+                    $row = $pdoquery -> fetch();
+                    $_SESSION["treasureremail"] = $row -> email;
+                } catch (PDOException $e) {
+                    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+                    $cancontinue = FALSE;
+                }
 
                 $results -> success = TRUE;
 
@@ -117,8 +133,8 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
                 try {
                     $pdoquery = $dbconn -> prepare($theq);
                     $pdoquery -> execute(array(//
-                    ':userid' => $_SESSION["userid"],//
-                    ':loginfrom'=>$_SERVER["REMOTE_ADDR"]));
+                    ':userid' => $_SESSION["userid"], //
+                    ':loginfrom' => $_SERVER["REMOTE_ADDR"]));
                     $row = $pdoquery -> fetch();
 
                 } catch (PDOException $e) {
