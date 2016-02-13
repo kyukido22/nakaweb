@@ -15,6 +15,7 @@ if (PHP_OS == 'WINNT') {
     require_once 'C:\inetpub\phplib\PHPExcel-1.8\Classes\PHPExcel.php';
     require_once 'C:\inetpub\phplib\PHPMailer-master\class.phpmailer.php';
     $xlsstore = 'C:\inetpub\phplogs\invoices\\';
+    $images='.\images\\';
 } else {
     require_once '/var/www/phplib/logitv2.php';
     require_once '/var/www/phplib/PDOconnectDB.php';
@@ -23,6 +24,7 @@ if (PHP_OS == 'WINNT') {
     require_once '/var/www/phplib/PHPExcel-1.8/Classes/PHPExcel.php';
     require_once '/var/www/phplib/PHPMailer-master/class.phpmailer.php';
     $xlsstore = '/var/invoices/';
+    $images='./images/';
 }
 
 static $logname = 'recordtest';
@@ -220,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Add naka logo to the worksheet
             $objDrawing = new PHPExcel_Worksheet_Drawing();
-            $objDrawing -> setPath('.\images\nakabanner.png');
+            $objDrawing -> setPath($images.'nakabanner.png');
             $objDrawing -> setHeight(90);
             $objDrawing -> setWorksheet($objPHPExcel -> getActiveSheet());
 
