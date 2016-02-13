@@ -46,6 +46,7 @@ function SetSessionVals($clientuserrecord, $PDOconn, $logname) {
         $_SESSION["clientdefaults"]["host"] = $client -> host;
         $_SESSION["clientdefaults"]["fullname"] = $client -> fullname;
         $_SESSION["clientdefaults"]["schoollogo"] = $client -> schoollogo;
+        $_SESSION["clientdefaults"]["fedidprefix"] = $client -> fedidprefix;
     }
 
     if ($cancontinue) {
