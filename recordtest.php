@@ -23,7 +23,7 @@ if (PHP_OS == 'WINNT') {
     require_once '/var/www/phplib/wc2lib.php';
     require_once '/var/www/phplib/PHPExcel-1.8/Classes/PHPExcel.php';
     require_once '/var/www/phplib/PHPMailer-master/class.phpmailer.php';
-    $xlsstore = '/var/invoices/';
+    $xlsstore = '/tmp/invoices/';
     $images='./images/';
 }
 
