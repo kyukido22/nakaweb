@@ -279,9 +279,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // save excel file
-            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-            logit($logname, '   SAVING ' . $xlsstore . 'naka' . $invoiceid . '.xlsx');
-            $objWriter -> save($xlsstore . 'naka' . $invoiceid . '.xlsx');
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+            logit($logname, '   SAVING ' . $xlsstore . 'naka' . $invoiceid . '.xls');
+            $objWriter -> save($xlsstore . 'naka' . $invoiceid . '.xls');
 
             //email invoice
             $email = new PHPMailer();
@@ -290,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email -> Subject = 'NAKA Invoice';
             $email -> Body = '';
             $email -> AddAddress($_SESSION["useremail"], $_SESSION["treasureremail"]);
-            $email -> AddAttachment($xlsstore . 'naka' . $invoiceid . '.xlsx', $invoiceid . '.xlsx');
+            $email -> AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
             $email -> Send();
         }
         unset($_SESSION['testdetails']);
