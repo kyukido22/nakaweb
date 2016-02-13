@@ -97,7 +97,6 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
                 $theq = " select email";
                 $theq .= " from users u";
                 $theq .= " where treasurer=true";
-                $theq .= "  and c.locked=false";
                 $theq .= "  and u.locked=false";
                 try {
                     $pdoquery = $dbconn -> prepare($theq);
