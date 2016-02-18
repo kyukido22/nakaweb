@@ -83,6 +83,7 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
                 $_SESSION["useremail"] = $row -> email;
                 $_SESSION["superuser"] = $row -> superuser;
                 $_SESSION["treasurer"] = $row -> treasurer;
+                $_SESSION["initials"] = $row -> initials;
                 $_SESSION["username"] = $row -> firstname . ' ' . $row -> lastname;
                 $_SESSION["usercompany"] = $row -> company;
                 $_SESSION["userlanguage"] = $row -> thelanguage;
