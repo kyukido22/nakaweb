@@ -157,6 +157,7 @@ if (!$results -> success) {
 }
 
 $thehtml = LoadTheHTML('page_login', null, $logname, 1, 1);
+$_SESSION['errortext'] = '';
 
 if ($thehtml == '') {
     $results -> errortext = 'no HTML found at: ' . __LINE__;
