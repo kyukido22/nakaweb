@@ -293,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email -> AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
             logit($logname, '   sending email');
             if (!$email -> Send()) {
-                logit($logname, '  EMAIL FAILED: ' . $email -> ErrorInfo);
+                logit($logname, '   **ERROR** EMAIL FAILED: ' . $email -> ErrorInfo);
             } else {
                 logit($logname, '   email sent');
             }
