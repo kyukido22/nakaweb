@@ -235,7 +235,7 @@ try {
     $cancontinue = FALSE;
 }
 
-$_SESSION['activestudents'] = '<form method="post" action="main.php">' . //
+$_SESSION['activestudents'] = '<form action="main.php">' . //
 "<select name=\"dlStudent\" onchange=\"this.form.submit()\">" . //
 "<option value=\"1\" selected>Select a Student</option>";
 while ($data = $pdoquery -> fetch()) {
@@ -260,7 +260,7 @@ try {
     $cancontinue = FALSE;
 }
 
-$_SESSION['inactivestudents'] = '<form method="post" action="main.php">' . //
+$_SESSION['inactivestudents'] = '<form action="main.php">' . //
 "<select name=\"dlStudent\" onchange=\"this.form.submit()\">" . //
 "<option value=\"1\" selected>Select a Student</option>";
 while ($data = $pdoquery -> fetch()) {
