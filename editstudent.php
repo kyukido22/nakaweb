@@ -57,11 +57,11 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ColAsInputField("zip", '3') . ',';
     $theq .= ColAsInputField("birthday", '6em', 'now()', '', 'date') . ',';
     $theq .= ColAsInputField("start_date", '6em', 'now()', '', 'date') . ',';
-    $theq .= ColAsInputField("phone1", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone1", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
     $theq .= ColAsInputField("phone1_type", '3', '', 'placeholder="ph type"') . ',';
-    $theq .= ColAsInputField("phone2", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone2", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
     $theq .= ColAsInputField("phone2_type", '3', '', 'placeholder="ph type"') . ',';
-    $theq .= ColAsInputField("phone3", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone3", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
     $theq .= ColAsInputField("phone3_type", '3', '', 'placeholder="ph type"') . ',';
     $theq .= ColAsInputField("email", '30', '', '', 'email') . ',';
     $theq .= "  student_type, sex, primary_contact,";

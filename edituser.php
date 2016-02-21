@@ -146,7 +146,7 @@ $theq .= ColAsInputField('address2', '', '', '', '', 'useraddress2') . ',';
 $theq .= ColAsInputField('city', '', '', '', '', 'usercity') . ',';
 $theq .= ColAsInputField('state', '', '', '', '', 'userstate') . ',';
 $theq .= ColAsInputField('zip', '', '', '', '', 'userzip') . ',';
-$theq .= ColAsInputField('phone', '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel', 'userphone') . ',';
+$theq .= ColAsInputField('phone', '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel', 'userphone') . ',';
 $theq .= ' case when locked then \'Disabled\' else \'Enabled\' end as lockeddisplay';
 $theq .= ' from users u';
 $theq .= ' where userid=:userid';
