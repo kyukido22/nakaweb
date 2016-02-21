@@ -417,7 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     logit($logname, '  they are also paying NAKA membership fees');
                     $nakafee = 'yes';
                 } else if ($_POST["testcount" . $value['stu_index']] < 2) {
-                    $studentdata[$i]['recordtestskipped'] = '<td><input name="nofeereason' . $value['stu_index'] . '"></td>';
+                    $studentdata[$i]['recordtestskipped'] = '<td><input name="nofeereason' . $value['stu_index'] . '" required></td>';
                     logit($logname, '  for some reason they are NOT paying NAKA membership fees');
                     $nakafee = 'no';
                 } else {
@@ -466,7 +466,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $theq .= ' then \'<td><input type="checkbox" name="membershipfee\'||s.stu_index||\'" checked></td>\'';
     $theq .= ' else \'<td>N/A</td>\'';
     $theq .= ' end as membershipfeecheckbox,';
-    $theq .= ' \'<td><input name="skipped\'||s.stu_index||\'"></td>\' as recordtestskipped, r.srk_index';
+    $theq .= ' \'<td><input type="number" min="0" max="4" name="skipped\'||s.stu_index||\'"></td>\' as recordtestskipped, r.srk_index';
     $theq .= " from students s";
     $theq .= " join ranks r on s.stu_index=r.stu_index";
     $theq .= " join sysdef.rank_names rn on rn.srk_index=r.srk_index";

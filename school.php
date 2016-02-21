@@ -148,8 +148,7 @@ try {
 }
 
 if ($_SESSION['superuser'] == true) {
-    $_SESSION['createnewuserbutton'] = '<form action="edituser.php" method="post">' .
-    // //
+    $_SESSION['createnewuserbutton'] = '<form action="edituser.php">' . //
     '<input type="hidden" name="userid" value="-1">' . //
     '<input class="button" type="submit" value=" Add User " /></form>';
 } else {

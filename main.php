@@ -41,7 +41,9 @@ $_SESSION['buttoneditstudent'] .= '  <input type="hidden" name="dlStudent" value
 
 
 // basic student info
-$theq = "select *,age(birthday) as age,age(start_date) as trainingage";
+$theq = "select *,";
+$theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
+$theq .= "split_part(age(start_date)::text,' ',1)||' '||split_part(age(start_date)::text,' ',2)as trainingage";
 $theq .= ' from students s ';
 $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
 $theq .= ' where s.stu_index=:stu_index';

@@ -32,6 +32,8 @@ $cancontinue = TRUE;
 
 if (key_exists('dlStudent', $_GET)) {
     $stu_index = $_GET["dlStudent"];
+
+    //-1 indicates a new student to be created
     // create a pg conection
 
     $_SESSION['buttoneditstudent'] = '  <form action="editstudent.php" method="post">';
@@ -40,8 +42,8 @@ if (key_exists('dlStudent', $_GET)) {
 
     // basic student info
     $theq = "select stu_index,";
-    $theq .= ColAsInputField("last_name") . ',';
-    $theq .= ColAsInputField("first_name") . ',';
+    $theq .= ColAsInputField("last_name", '', '', 'required placeholder="last name"') . ',';
+    $theq .= ColAsInputField("first_name", '', '', 'required placeholder="first name"') . ',';
     $theq .= ColAsInputField("middle_name", '1') . ',';
     $theq .= ColAsInputField("m_last_name") . ',';
     $theq .= ColAsInputField("m_first_name") . ',';
@@ -53,16 +55,18 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ColAsInputField("city") . ',';
     $theq .= ColAsInputField("state", '1') . ',';
     $theq .= ColAsInputField("zip", '3') . ',';
-    $theq .= ColAsInputField("birthday", '8', 'now()') . ',';
-    $theq .= ColAsInputField("start_date", '8', 'now()') . ',';
-    $theq .= ColAsInputField("phone1") . ',';
-    $theq .= ColAsInputField("phone1_type", '3') . ',';
-    $theq .= ColAsInputField("phone2") . ',';
-    $theq .= ColAsInputField("phone2_type", '3') . ',';
-    $theq .= ColAsInputField("phone3") . ',';
-    $theq .= ColAsInputField("phone3_type", '3') . ',';
-    $theq .= ColAsInputField("email", '30') . ',';
-    $theq .= "  student_type, sex, primary_contact,age(birthday) as age, age(start_date) as trainingage";
+    $theq .= ColAsInputField("birthday", '6em', 'now()', '', 'date') . ',';
+    $theq .= ColAsInputField("start_date", '6em', 'now()', '', 'date') . ',';
+    $theq .= ColAsInputField("phone1", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone1_type", '3', '', 'placeholder="ph type"') . ',';
+    $theq .= ColAsInputField("phone2", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone2_type", '3', '', 'placeholder="ph type"') . ',';
+    $theq .= ColAsInputField("phone3", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"', 'tel') . ',';
+    $theq .= ColAsInputField("phone3_type", '3', '', 'placeholder="ph type"') . ',';
+    $theq .= ColAsInputField("email", '30', '', '', 'email') . ',';
+    $theq .= "  student_type, sex, primary_contact,";
+    $theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
+    $theq .= "split_part(age(start_date)::text,' ',1)||' '||split_part(age(start_date)::text,' ',2)as trainingage";
     $theq .= ' from students s ';
     $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
     $theq .= ' where s.stu_index=:stu_index';
@@ -78,7 +82,7 @@ if (key_exists('dlStudent', $_GET)) {
     }
 
 
-
+    // combo box for student types
     $theq = "  select distinct stt_index,s1.student_type,stt_description, s2.student_type as thisstudent";
     $theq .= ' from students s1';
     $theq .= ' join sysdef.student_type on short_name=s1.student_type';
@@ -105,25 +109,6 @@ if (key_exists('dlStudent', $_GET)) {
         $cancontinue = FALSE;
     }
 
-
-    /*
-     "P";"V.I.P."
-     "A";"Active"
-     "APC";"Active (Punch-card)"
-     "ANP";"Active (Non-paying)"
-     "APW";"Active (Pee Wee)"
-     "LOA";"Leave of Absence"
-     "DNE";"Did not Enroll"
-     "P W";"Prospect for WISE"
-     "WISE";"WISE Student"
-     "P BP";"Prospect from BP"
-     "P PH";"Prospect from phone"
-     "P M";"Prospect from Movie"
-     "P E";"Prospect from Expo"
-     "R";"Rolledex entry"
-
-     *
-     */
 
     //rank info
     $theq = 'select * from students s ';
@@ -180,7 +165,7 @@ if (key_exists('dlStudent', $_GET)) {
         $pdoquery -> execute(array(':stu_index' => $stu_index));
 
         $medalert[0] = new stdClass();
-        $medalert[0] -> note_timestamp = 'New Alert';
+        $medalert[0] -> note_timestamp = 'NewAlert';
         $medalert[0] -> employee = ' <input type="hidden" name="ma-employee" value="MA*">';
         $medalert[0] -> note_text = ' <input type="text" name="ma-note_text" size="100%">';
 
@@ -252,6 +237,38 @@ if (key_exists('dlStudent', $_GET)) {
 } elseif (key_exists('dlStudent', $_POST)) {
     // write updates to database and go backto student selection screen
     $stu_index = $_POST["dlStudent"];
+
+    if ($stu_index == -1) {
+        //-1 indicates that this is a new student so we need to get the next id
+        // and do an insert first
+
+        $theq = "select nextval('seq_students') as stu_index";
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute();
+            $row = $pdoquery -> fetch();
+            $stu_index = $row -> stu_index;
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
+
+
+        $theq = "insert into students (stu_index) values (:stu_index)";
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute(array(':stu_index' => $stu_index));
+            $row = $pdoquery -> fetch();
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
+    }
+
 
     $theq = 'update students set';
     $theq .= " last_name=:last_name,";
@@ -348,7 +365,7 @@ if (key_exists('dlStudent', $_GET)) {
 
 
     logit($logname, 'going back to main.php');
-    header('Location: main.php?dlStudent='.$stu_index);
+    header('Location: main.php?dlStudent=' . $stu_index);
     exit ;
 
 
