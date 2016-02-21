@@ -15,6 +15,20 @@ table {
   max-width: 850px;
 }
 
+.button {
+    background-color: blue;
+    border: none;
+    color: white;
+    padding: 8px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
 td {
   border: none;
 }
