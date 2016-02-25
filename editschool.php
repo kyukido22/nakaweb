@@ -113,7 +113,7 @@ $_SESSION['post'] = 'method="post"';
 
 $_SESSION['clientdefaults']['pagetitle'] = 'Edit School';
 $_SESSION['buttontextschool'] = ' Save ';
-$_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input type="button" value=" Cancel " /></a>';
+$_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input class="button" type="submit" value=" Cancel " /></a>';
 $_SESSION['editstudentsbutton'] = '';
 
 $thehtml = LoadTheHTML('page_editschool', array(//

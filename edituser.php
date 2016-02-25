@@ -175,7 +175,7 @@ $_SESSION['createnewuserbutton'] = "";
 $_SESSION['post'] = 'method="post"';
 $_SESSION['clientdefaults']['pagetitle'] = 'Edit User';
 $_SESSION['buttontextuser'] = ' Save ';
-$_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input type="button" value=" Cancel " /></a>' .
+$_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input class="button" type="submit" value=" Cancel " /></a>' .
 // //
 "<br>Enabled: <select name=\"locked\">" . /////
 "<option value=\"false\" " . $enabledselected . ">True</option>" . //
