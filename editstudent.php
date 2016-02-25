@@ -70,13 +70,13 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ' from students s ';
     $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
     $theq .= ' where s.stu_index=:stu_index';
-    
+
     try {
         $pdoquery = $dbconn -> prepare($theq);
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
         $pdoquery -> execute(array(':stu_index' => $stu_index));
         $studentdata = $pdoquery -> fetchAll();
-        $studentdata[0]->stu_index='New';
+        $studentdata[0] -> stu_index = 'New';
     } catch (PDOException $e) {
         logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
         $results -> errortext = $e -> getMessage();
@@ -95,16 +95,17 @@ if (key_exists('dlStudent', $_GET)) {
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
         $pdoquery -> execute(array(':stu_index' => $stu_index));
         $studenttypes = $pdoquery -> fetchAll();
-        $studentdata[0] -> stt_description = "<select name=\"cbstudenttype\">";
+        $thebox = "<select name=\"cbstudenttype\">";
         foreach ($studenttypes as $key => $value) {
             if ($value -> thisstudent != '') {
-                $studentdata[0] -> stt_description .= "<option value=\"" . $value -> student_type . "\" selected>" . $value -> stt_description . "</option>";
+                $thebox .= "<option value=\"" . $value -> student_type . "\" selected>" . $value -> stt_description . "</option>";
             } else {
-                $studentdata[0] -> stt_description .= "<option value=\"" . $value -> student_type . "\">" . $value -> stt_description . "</option>\n";
+                $thebox .= "<option value=\"" . $value -> student_type . "\">" . $value -> stt_description . "</option>\n";
             }
         }
-        $studentdata[0] -> stt_description .= "</select>";
+        $thebox .= "</select>";
 
+        $studentdata[0] -> stt_description = $thebox;
     } catch (PDOException $e) {
         logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
         $results -> errortext = $e -> getMessage();
