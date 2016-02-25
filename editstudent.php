@@ -111,20 +111,40 @@ if (key_exists('dlStudent', $_GET)) {
 
 
     //rank info
-    $theq = 'select * from students s ';
-    $theq .= ' left join ranks r on r.stu_index=s.stu_index ';
-    $theq .= ' left join sysdef.rank_names rn on rn.srk_index=r.srk_index ';
-    $theq .= ' left join sysdef.class_type ct on ct.clt_index=rn.clt_index ';
-    $theq .= ' where s.stu_index=:stu_index';
-    $theq .= ' order by clt_seq,srk_seq';
-    try {
-        $pdoqueryranks = $dbconn -> prepare($theq);
-        $pdoqueryranks -> setFetchMode(PDO::FETCH_OBJ);
-        $pdoqueryranks -> execute(array(':stu_index' => $stu_index));
-    } catch (PDOException $e) {
-        logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-        $results -> errortext = $e -> getMessage();
-        $cancontinue = FALSE;
+
+    if ($stu_index == -1) {
+        $studentranks[0] = new stdClass();
+        $studentranks[0] -> fed_id = '<input type="text" name="fed_id" size="5" placeholder="MC16-05">';
+        $studentranks[0] -> clt_description = CreateArtCB($dbconn, $logname);
+        $studentranks[0] -> test_date = '<input type="date" name="test_date" value="' . date('Y-m-d') . '">';
+        $studentranks[0] -> srk_description = '<select name="rankvaue">';
+        for ($i = 12; $i > 0; $i--) {
+            $studentranks[0] -> srk_description .= ' <option value="' . $i . '">' . abs($i) . ' Kup </option>';
+        }
+        for ($i = -1; $i > -10; $i--) {
+            $studentranks[0] -> srk_description .= ' <option value="' . $i . '">' . abs($i) . ' Dan </option>';
+        }
+        $studentranks[0] -> srk_description .= '</select>';
+
+    } else {
+        $theq = 'select *';
+
+        $theq .= ' from students s ';
+        $theq .= ' left join ranks r on r.stu_index=s.stu_index ';
+        $theq .= ' left join sysdef.rank_names rn on rn.srk_index=r.srk_index ';
+        $theq .= ' left join sysdef.class_type ct on ct.clt_index=rn.clt_index ';
+        $theq .= ' where s.stu_index=:stu_index';
+        $theq .= ' order by clt_seq,srk_seq';
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute(array(':stu_index' => $stu_index));
+            $studentranks = $pdoquery -> fetchAll();
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
     }
 
     //notes
@@ -140,7 +160,7 @@ if (key_exists('dlStudent', $_GET)) {
         $notes[0] = new stdClass();
         $notes[0] -> note_timestamp = 'New Note';
         $notes[0] -> employee = $_SESSION["initials"];
-        $notes[0] -> note_text = ' <input type="text" name="note-note_text" size="100%">';
+        $notes[0] -> note_text = ' <input type="text" name="note-note_text" size="100">';
 
         $i = 1;
         while ($noterow = $pdoquery -> fetch()) {
@@ -167,7 +187,7 @@ if (key_exists('dlStudent', $_GET)) {
         $medalert[0] = new stdClass();
         $medalert[0] -> note_timestamp = 'NewAlert';
         $medalert[0] -> employee = ' <input type="hidden" name="ma-employee" value="MA*">';
-        $medalert[0] -> note_text = ' <input type="text" name="ma-note_text" size="100%">';
+        $medalert[0] -> note_text = ' <input type="text" name="ma-note_text" size="100">';
 
         $i = 1;
         while ($noterow = $pdoquery -> fetch()) {
@@ -220,7 +240,7 @@ if (key_exists('dlStudent', $_GET)) {
     'shared_student' => $studentdata, //
     'shared_parents' => $studentdata, //
     'shared_contact' => $studentdata, //
-    'detail_ranks' => $pdoqueryranks -> fetchAll(), //
+    'detail_ranks' => $studentranks, //
     'header_contractsa' => $contractsa, //
     'detail_contractsa' => $contractsa, //
     'header_contractsi' => $contractsi, //
@@ -267,6 +287,57 @@ if (key_exists('dlStudent', $_GET)) {
             $results -> errortext = $e -> getMessage();
             $cancontinue = FALSE;
         }
+
+        //figure out what the srk_index must be
+        $theq = 'select * from sysdef.rank_names';
+        $theq .= ' where clt_index=:clt_index';
+        $theq .= ' and srk_seq=:srk_seq';
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute(array(//
+            ':clt_index' => clean_user_input($_POST['artid']), //
+            ':srk_seq' => clean_user_input($_POST['rankvaue'])));
+            $row = $pdoquery -> fetch();
+            $srk_index = $row -> srk_index;
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
+
+
+        $theq = "insert into ranks (stu_index, srk_index, test_date, fed_id, current_rank) values";
+        $theq .= "(:stu_index, :srk_index, :test_date, :fed_id, true)";
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute(array(':stu_index' => $stu_index, //
+            ':srk_index' => $srk_index, //
+            ':test_date' => clean_user_input($_POST['test_date']), //
+            ':fed_id' => clean_user_input($_POST['fed_id'])));
+            $row = $pdoquery -> fetch();
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
+
+
+        $studentranks[0] -> fed_id = '<input type="text" name="fed_id" size="5" placeholder="MC16-05">';
+        $studentranks[0] -> clt_description = CreateArtCB($dbconn, $logname);
+        $studentranks[0] -> test_date = '<input type="date" name="test_date" value="' . date('Y-m-d') . '">';
+        $studentranks[0] -> srk_description = '<select name="rankvaue">';
+        for ($i = -12; $i < 0; $i++) {
+            $studentranks[0] -> srk_description .= ' <option value="' . $i . '">' . abs($i) . ' Kup </option>';
+        }
+        for ($i = 1; $i < 10; $i++) {
+            $studentranks[0] -> srk_description .= ' <option value="' . $i . '">' . abs($i) . ' Dan </option>';
+        }
+        $studentranks[0] -> srk_description .= '</select>';
+
+
+
     }
 
 
