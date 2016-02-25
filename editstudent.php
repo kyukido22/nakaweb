@@ -57,20 +57,12 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ColAsInputField("zip", '3') . ',';
     $theq .= ColAsInputField("birthday", '6', 'now()', '', 'date') . ',';
     $theq .= ColAsInputField("start_date", '6', 'now()', '', 'date') . ',';
-/*    $theq .= ColAsInputField("phone1", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
+    $theq .= ColAsInputField("phone1", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
     $theq .= ColAsInputField("phone1_type", '3', '', 'placeholder="ph type"') . ',';
     $theq .= ColAsInputField("phone2", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
     $theq .= ColAsInputField("phone2_type", '3', '', 'placeholder="ph type"') . ',';
     $theq .= ColAsInputField("phone3", '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel') . ',';
- * 
- */
-    $theq .= ColAsInputField("phone1" ) . ',';
-    $theq .= ColAsInputField("phone1_type", '3', '', 'placeholder="ph type"') . ',';
-    $theq .= ColAsInputField("phone2" ) . ',';
-    $theq .= ColAsInputField("phone2_type", '3', '', 'placeholder="ph type"') . ',';
-    $theq .= ColAsInputField("phone3" ) . ',';
     $theq .= ColAsInputField("phone3_type", '3', '', 'placeholder="ph type"') . ',';
-     $theq .= ColAsInputField("phone3_type", '3', '', 'placeholder="ph type"') . ',';
     $theq .= ColAsInputField("email", '30', '', '', 'email') . ',';
     $theq .= "  student_type, sex, primary_contact,";
     $theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
@@ -78,6 +70,16 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ' from students s ';
     $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
     $theq .= ' where s.stu_index=:stu_index';
+    
+    
+    $theq = "select *";
+    $theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
+    $theq .= "split_part(age(start_date)::text,' ',1)||' '||split_part(age(start_date)::text,' ',2)as trainingage";
+    $theq .= ' from students s ';
+    $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
+    $theq .= ' where s.stu_index=:stu_index';
+    
+    
     try {
         $pdoquery = $dbconn -> prepare($theq);
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
