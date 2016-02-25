@@ -72,7 +72,7 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ' where s.stu_index=:stu_index';
     
     
-    $theq = "select *";
+    $theq = "select *,";
     $theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
     $theq .= "split_part(age(start_date)::text,' ',1)||' '||split_part(age(start_date)::text,' ',2)as trainingage";
     $theq .= ' from students s ';
