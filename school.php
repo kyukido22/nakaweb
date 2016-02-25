@@ -79,7 +79,7 @@ try {
 
 $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
 // superuser info
-$theq = 'select login as userlogin,thepassword as userthepassword,thelanguage as userthelanguage,u.userid,';
+$theq = 'select login as userlogin,\'********\' as userthepassword,thelanguage as userthelanguage,u.userid,';
 $theq .= ' firstname as userfirstname,lastname as userlastname,email as useremail,address1 as useraddress1,';
 $theq .= ' address2 as useraddress2,city as usercity,state as userstate,zip as userzip,phone as userphone';
 $theq .= ' from users u';
@@ -99,7 +99,7 @@ try {
 }
 
 // defuser info
-$theq = 'select login as userlogin,thepassword as userthepassword,thelanguage as userthelanguage,u.userid,';
+$theq = 'select login as userlogin,\'********\' as userthepassword,thelanguage as userthelanguage,u.userid,';
 $theq .= ' firstname as userfirstname,lastname as userlastname,email as useremail,address1 as useraddress1,';
 $theq .= ' address2 as useraddress2,city as usercity,state as userstate,zip as userzip,phone as userphone,';
 $theq .= ' case when u.locked then \'Disabled\' else \'Enabled\' end as lockeddisplay';

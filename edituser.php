@@ -73,8 +73,8 @@ if (key_exists('firstname', $_POST)) {
     if ($_POST["userid"] == -1) {
         // -1 means adding new user
         $theq .= ' login=:login,';
-        $theq .= ' thepassword=:userpassword,';
     }
+    $theq .= ' thepassword=:thepassword,';
     $theq .= ' email=:email,';
     $theq .= ' address1=:address1,';
     $theq .= ' address2=:address2,';
@@ -90,7 +90,7 @@ if (key_exists('firstname', $_POST)) {
         if ($_POST["userid"] == -1) {
             $pdoquery -> execute(array(':userid' => $userid, //
             ':login' => clean_user_input($_POST["userlogin"]), //
-            ':userpassword' => clean_user_input($_POST["userpassword"]), //
+            ':thepassword' => clean_user_input($_POST["thepassword"]), //
             ':firstname' => clean_user_input($_POST["firstname"]), //
             ':lastname' => clean_user_input($_POST["lastname"]), //
             ':locked' => $_POST["locked"], //
@@ -104,6 +104,7 @@ if (key_exists('firstname', $_POST)) {
         } else {
             $pdoquery -> execute(array(':userid' => $userid, //
             ':firstname' => clean_user_input($_POST["firstname"]), //
+            ':thepassword' => clean_user_input($_POST["thepassword"]), //
             ':lastname' => clean_user_input($_POST["lastname"]), //
             ':locked' => $_POST["locked"], //
             ':email' => clean_user_input($_POST["email"]), //
@@ -146,6 +147,7 @@ $theq .= ColAsInputField('address2', '', '', '', '', 'useraddress2') . ',';
 $theq .= ColAsInputField('city', '', '', '', '', 'usercity') . ',';
 $theq .= ColAsInputField('state', '', '', '', '', 'userstate') . ',';
 $theq .= ColAsInputField('zip', '', '', '', '', 'userzip') . ',';
+$theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepassword') . ',';
 $theq .= ColAsInputField('phone', '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel', 'userphone') . ',';
 $theq .= ' case when locked then \'Disabled\' else \'Enabled\' end as lockeddisplay';
 $theq .= ' from users u';
