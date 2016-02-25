@@ -84,6 +84,21 @@ if (key_exists('dlStudent', $_GET)) {
     }
 
 
+    // combo box for sex
+    if ($studentdata[0] -> sex == 'M') {
+        $thebox = '<select name="cbsex">';
+        $thebox .= '<option value="M" selected>Male</option>';
+        $thebox .= '<option value="F">Female</option>';
+        $thebox .= "</select>";
+    } else {
+        $thebox = '<select name="cbsex">';
+        $thebox .= '<option value="M">Male</option>';
+        $thebox .= '<option value="F" selected>Female</option>';
+        $thebox .= "</select>";
+    }
+
+    $studentdata[0] -> sex = $thebox;
+
     // combo box for student types
     $theq = "  select distinct stt_index,s1.student_type,stt_description, s2.student_type as thisstudent";
     $theq .= ' from students s1';
@@ -345,6 +360,7 @@ if (key_exists('dlStudent', $_GET)) {
 
 
     $theq = 'update students set';
+    $theq .= " sex=:cbsex,";
     $theq .= " last_name=:last_name,";
     $theq .= " first_name=:first_name,";
     $theq .= " middle_name=:middle_name,";
@@ -374,6 +390,7 @@ if (key_exists('dlStudent', $_GET)) {
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
         $pdoquery -> execute(array(':stu_index' => $stu_index, //
         ":cbstudenttype" => clean_user_input($_POST["cbstudenttype"]), //
+        ":cbsex" => clean_user_input($_POST["cbsex"]), //
         ":last_name" => clean_user_input($_POST["last_name"]), //
         ":first_name" => clean_user_input($_POST["first_name"]), //
         ":middle_name" => clean_user_input($_POST["middle_name"]), //
