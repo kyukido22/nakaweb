@@ -71,20 +71,12 @@ if (key_exists('dlStudent', $_GET)) {
     $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
     $theq .= ' where s.stu_index=:stu_index';
     
-    
-    $theq = "select *,";
-    $theq .= "split_part(age(birthday)::text,' ',1)||' '||split_part(age(birthday)::text,' ',2)as age,";
-    $theq .= "split_part(age(start_date)::text,' ',1)||' '||split_part(age(start_date)::text,' ',2)as trainingage";
-    $theq .= ' from students s ';
-    $theq .= ' left join sysdef.student_type st on st.short_name=s.student_type ';
-    $theq .= ' where s.stu_index=:stu_index';
-    
-    
     try {
         $pdoquery = $dbconn -> prepare($theq);
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
         $pdoquery -> execute(array(':stu_index' => $stu_index));
         $studentdata = $pdoquery -> fetchAll();
+        $studentdata[0]->stu_index='New';
     } catch (PDOException $e) {
         logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
         $results -> errortext = $e -> getMessage();
