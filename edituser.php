@@ -89,7 +89,7 @@ if (key_exists('firstname', $_POST)) {
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
         if ($_POST["userid"] == -1) {
             $pdoquery -> execute(array(':userid' => $userid, //
-            ':login' => clean_user_input($_POST["userlogin"]), //
+            ':login' => clean_user_input($_POST["login"]), //
             ':thepassword' => clean_user_input($_POST["thepassword"]), //
             ':firstname' => clean_user_input($_POST["firstname"]), //
             ':lastname' => clean_user_input($_POST["lastname"]), //
