@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isset($_POST['nofeereason' . $value["stu_index"]])) {
                     $objPHPExcel -> getActiveSheet() -> setCellValue('D' . $row, $_POST['nofeereason' . $value["stu_index"]]);
                 } elseif ($_POST['membershipfee' . $value["stu_index"]] == 'yes') {
-                    $objPHPExcel -> getActiveSheet() -> setCellValue('D' . $row, '10');
+                    $objPHPExcel -> getActiveSheet() -> setCellValue('D' . $row, $testfees[-99]);
                 } else {
                     $objPHPExcel -> getActiveSheet() -> setCellValue('D' . $row, '0');
                 }
@@ -344,7 +344,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
             $pdoquery -> execute();
             while ($row = $pdoquery -> fetch()) {
-                $testfees[$row -> torank] = $row -> fee;
+                $testfees[$row -> torank] = $row -> fee;                
             }
             //var_dump($testfees);
         } catch (PDOException $e) {
@@ -412,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 if (isset($_POST["membershipfee" . $value['stu_index']])) {
-                    $totalfee = $totalfee + 10;
+                    $totalfee = $totalfee + $testfees[-99];
                     $studentdata[$i]['recordtestskipped'] = '<td>New Member</td>';
                     logit($logname, '  they are also paying NAKA membership fees');
                     $nakafee = 'yes';
