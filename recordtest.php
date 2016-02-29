@@ -71,6 +71,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cancontinue = FALSE;
         }
 
+        //get rank fees
+        $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+        $theq = " select torank,fee";
+        $theq .= " from testfees";
+        $theq .= " order by torank";
+        try {
+            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
+            $pdoquery -> execute();
+            while ($row = $pdoquery -> fetch()) {
+                $testfees[$row -> torank] = $row -> fee;                
+            }
+            //var_dump($testfees);
+        } catch (PDOException $e) {
+            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
+            $results -> errortext = $e -> getMessage();
+            $cancontinue = FALSE;
+        }
 
         //create invoice now so we can write into it when interating though
         // students
@@ -334,24 +352,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cancontinue = FALSE;
         }
 
-        //get rank fees
-        $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
-        $theq = " select torank,fee";
-        $theq .= " from testfees";
-        $theq .= " order by torank";
-        try {
-            $pdoquery = $dbconn -> prepare($theq);
-            $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-            $pdoquery -> execute();
-            while ($row = $pdoquery -> fetch()) {
-                $testfees[$row -> torank] = $row -> fee;                
-            }
-            //var_dump($testfees);
-        } catch (PDOException $e) {
-            logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-            $results -> errortext = $e -> getMessage();
-            $cancontinue = FALSE;
-        }
 
         // load data to be displayed
         $i = 0;
