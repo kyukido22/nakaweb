@@ -36,8 +36,6 @@ GetTheHTMLs('EN-US', 0, $dbconnw, $logname);
 
 logit($logname, 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
-// create a pg conection
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
 
 $results = new stdClass();
 $results -> success = FALSE;
@@ -72,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         //get rank fees
-        $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
         $theq = " select torank,fee";
         $theq .= " from testfees";
         $theq .= " order by torank";
