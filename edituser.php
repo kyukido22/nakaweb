@@ -66,15 +66,30 @@ if (key_exists('firstname', $_POST)) {
         }
     }
 
+    $params = array(':userid' => $userid, //
+    ':firstname' => clean_user_input($_POST["firstname"]), //
+    ':lastname' => clean_user_input($_POST["lastname"]), //
+    ':locked' => $_POST["locked"], //
+    ':email' => clean_user_input($_POST["email"]), //
+    ':address1' => clean_user_input($_POST["address1"]), //
+    ':address2' => clean_user_input($_POST["address2"]), //
+    ':city' => clean_user_input($_POST["city"]), //
+    ':state' => clean_user_input($_POST["state"]), //
+    ':zip' => clean_user_input($_POST["zip"]), //
+    ':phone' => clean_user_input($_POST["phone"]));
+
     logit($logname, '  updating user');
     $theq = 'update users';
     $theq .= ' set firstname= :firstname,';
     $theq .= ' lastname=:lastname,';
-    if ($_POST["userid"] == -1) {
-        // -1 means adding new user
+    if (isset($_POST["login"])) {
+        $params[':login'] = clean_user_input($_POST["login"]);
         $theq .= ' login=:login,';
     }
-    $theq .= ' thepassword=:thepassword,';
+    if (isset($_POST["thepassword"])) {
+        $params[':thepassword'] = clean_user_input($_POST["thepassword"]);
+        $theq .= ' thepassword=:thepassword,';
+    }
     $theq .= ' email=:email,';
     $theq .= ' address1=:address1,';
     $theq .= ' address2=:address2,';
@@ -87,35 +102,7 @@ if (key_exists('firstname', $_POST)) {
     try {
         $pdoquery = $dbconn -> prepare($theq);
         $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-        if ($_POST["userid"] == -1) {
-            $pdoquery -> execute(array(':userid' => $userid, //
-            ':login' => clean_user_input($_POST["login"]), //
-            ':thepassword' => clean_user_input($_POST["thepassword"]), //
-            ':firstname' => clean_user_input($_POST["firstname"]), //
-            ':lastname' => clean_user_input($_POST["lastname"]), //
-            ':locked' => $_POST["locked"], //
-            ':email' => clean_user_input($_POST["email"]), //
-            ':address1' => clean_user_input($_POST["address1"]), //
-            ':address2' => clean_user_input($_POST["address2"]), //
-            ':city' => clean_user_input($_POST["city"]), //
-            ':state' => clean_user_input($_POST["state"]), //
-            ':zip' => clean_user_input($_POST["zip"]), //
-            ':phone' => clean_user_input($_POST["phone"])));
-        } else {
-            $pdoquery -> execute(array(':userid' => $userid, //
-            ':firstname' => clean_user_input($_POST["firstname"]), //
-            ':thepassword' => clean_user_input($_POST["thepassword"]), //
-            ':lastname' => clean_user_input($_POST["lastname"]), //
-            ':locked' => $_POST["locked"], //
-            ':email' => clean_user_input($_POST["email"]), //
-            ':address1' => clean_user_input($_POST["address1"]), //
-            ':address2' => clean_user_input($_POST["address2"]), //
-            ':city' => clean_user_input($_POST["city"]), //
-            ':state' => clean_user_input($_POST["state"]), //
-            ':zip' => clean_user_input($_POST["zip"]), //
-            ':phone' => clean_user_input($_POST["phone"])));
-        }
-
+        $pdoquery -> execute($params);
     } catch (PDOException $e) {
         logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
         $results -> errortext = $e -> getMessage();
@@ -134,10 +121,21 @@ if (key_exists('firstname', $_POST)) {
 
 $theq = 'select u.userid,locked,';
 if ($userid == -1) {
+    // new user, allow login and password to be updated
+    logit($logname, '  inserting new user... adding edit boxes for login and thepassword');
     $theq .= ColAsInputField('login', '', '', 'required', '', 'userlogin') . ',';
-    $theq .= ColAsInputField('thepassword', '', '', 'required', '', 'userthepassword') . ',';
+    $theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepassword') . ',';
+} elseif ($_SESSION['userid'] == $userid  or $_SESSION["superuser"]) {
+    // user is editing his own data OR user is superuser, allow password to be
+    // updated
+    logit($logname, '  superuser: ' . $_SESSION["superuser"]);
+    logit($logname, '  user is editing their own data OR this is a super user... adding edit boxes for thepassword');
+    $theq .= " login as userlogin,";
+    $theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepassword') . ',';
 } else {
-    $theq .= " login as userlogin,'' as userthepassword,";
+    //must be a pleb editing someone elses record, dont allow password updating
+    logit($logname, '  this is a pleb editing someone elses data... no edit boxes for login or thepassword');
+    $theq .= " login as userlogin,'********' as userthepassword,";
 }
 $theq .= ColAsInputField('firstname', '', '', 'required', '', 'userfirstname') . ',';
 $theq .= ColAsInputField('lastname', '', '', 'required', '', 'userlastname') . ',';
@@ -147,7 +145,6 @@ $theq .= ColAsInputField('address2', '', '', '', '', 'useraddress2') . ',';
 $theq .= ColAsInputField('city', '', '', '', '', 'usercity') . ',';
 $theq .= ColAsInputField('state', '', '', '', '', 'userstate') . ',';
 $theq .= ColAsInputField('zip', '', '', '', '', 'userzip') . ',';
-$theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepassword') . ',';
 $theq .= ColAsInputField('phone', '', '', 'placeholder="123-123-1234" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" title="Please user the format 123-123-1234"', 'tel', 'userphone') . ',';
 $theq .= ' case when locked then \'Disabled\' else \'Enabled\' end as lockeddisplay';
 $theq .= ' from users u';
