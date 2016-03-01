@@ -30,8 +30,9 @@ if (PHP_OS == 'WINNT') {
 static $logname = 'recordtest';
 startthelog($logname, TRUE);
 
-$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
-GetTheHTMLs('EN-US', 0, $dbconn, $logname);
+$dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+GetTheHTMLs('EN-US', 0, $dbconnw, $logname);
 
 logit($logname, 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
@@ -53,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          */
 
         // get invoiceid
-        $dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
         $theq = " insert into invoices (schoolid, invoicedate, invoiceamount) values";
         $theq .= " (:schoolid, now(), :invoiceamount)";
         $theq .= " returning invoiceid";
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $theq .= " from testfees";
         $theq .= " order by torank";
         try {
-            $pdoquery = $dbconn -> prepare($theq);
+            $pdoquery = $dbconnw -> prepare($theq);
             $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
             $pdoquery -> execute();
             while ($row = $pdoquery -> fetch()) {
