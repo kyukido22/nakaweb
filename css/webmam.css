@@ -221,3 +221,14 @@ select:focus, textarea:focus, input[type="text"]:focus, input[type="password"]:f
 	float: right;
 	right: 5px;
 }
+input[type='checkbox'] {
+    -webkit-appearance:none;
+    width:22px;
+    height:22px;
+    background:white;
+    border-radius:5px;
+    border:2px solid #555;
+}
+input[type='checkbox']:checked {
+  background: green;
+}
