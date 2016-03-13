@@ -178,7 +178,7 @@ if (key_exists('dlStudent', $_GET)) {
         $notes[0] = new stdClass();
         $notes[0] -> note_timestamp = 'New Note';
         $notes[0] -> employee = $_SESSION["initials"];
-        $notes[0] -> note_text = ' <input type="text" name="note-note_text" size="100">';
+        $notes[0] -> note_text = ' <input type="text" name="note-note_text" size="80%">';
 
         $i = 1;
         while ($noterow = $pdoquery -> fetch()) {
@@ -205,7 +205,7 @@ if (key_exists('dlStudent', $_GET)) {
         $medalert[0] = new stdClass();
         $medalert[0] -> note_timestamp = 'NewAlert';
         $medalert[0] -> employee = ' <input type="hidden" name="ma-employee" value="MA*">';
-        $medalert[0] -> note_text = ' <input type="text" name="ma-note_text" size="100">';
+        $medalert[0] -> note_text = ' <input type="text" name="ma-note_text" size="80%">';
 
         $i = 1;
         while ($noterow = $pdoquery -> fetch()) {
