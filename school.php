@@ -126,7 +126,7 @@ $theq .= ' join invoices i on i.invoiceid=t.invoiceid';
 if (PHP_OS == 'WINNT') {
     $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=password','";
 } else {
-    $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^','";
+    $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^ port=54494','";
 }
 $theq .= " 		select clt_index, clt_seq, short_name, clt_description from sysdef.class_type') as (";
 $theq .= " 		clt_index integer,";
