@@ -85,7 +85,7 @@ if (key_exists('dlStudent', $_GET)) {
 
 
     // combo box for sex
-    if ($studentdata[0] -> sex == 'M') {
+    if ($studentdata[0] -> sex != 'F') {
         $thebox = '<select name="cbsex">';
         $thebox .= '<option value="M" selected>Male</option>';
         $thebox .= '<option value="F">Female</option>';
