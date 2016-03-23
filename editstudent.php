@@ -100,10 +100,15 @@ if (key_exists('dlStudent', $_GET)) {
     $studentdata[0] -> sex = $thebox;
 
     // combo box for student types
-    $theq = "  select distinct stt_index,s1.student_type,stt_description, s2.student_type as thisstudent";
-    $theq .= ' from students s1';
-    $theq .= ' join sysdef.student_type on short_name=s1.student_type';
-    $theq .= ' left join (select student_type from students where stu_index=:stu_index) s2 on s1.student_type=s2.student_type';
+    $theq = 'select distinct stt_index,short_name,stt_description, s2.student_type as thisstudent';
+    $theq .= '  from sysdef.student_type s1';
+    $theq .= ' join (select distinct student_type from students';
+    $theq .= "      union all select 'A'";
+    $theq .= "      union all select 'LOA'";
+    $theq .= ' )  s on s.student_type=s1.short_name';
+    $theq .= ' left join (';
+    $theq .= ' select student_type';
+    $theq .= ' from students where stu_index=:stu_index) s2 on s1.short_name=s2.student_type';
     $theq .= ' order by stt_index';
     try {
         $pdoquery = $dbconn -> prepare($theq);
@@ -113,9 +118,9 @@ if (key_exists('dlStudent', $_GET)) {
         $thebox = "<select name=\"cbstudenttype\">";
         foreach ($studenttypes as $key => $value) {
             if ($value -> thisstudent != '') {
-                $thebox .= "<option value=\"" . $value -> student_type . "\" selected>" . $value -> stt_description . "</option>";
+                $thebox .= "<option value=\"" . $value -> short_name . "\" selected>" . $value -> stt_description . "</option>";
             } else {
-                $thebox .= "<option value=\"" . $value -> student_type . "\">" . $value -> stt_description . "</option>\n";
+                $thebox .= "<option value=\"" . $value -> short_name . "\">" . $value -> stt_description . "</option>\n";
             }
         }
         $thebox .= "</select>";
