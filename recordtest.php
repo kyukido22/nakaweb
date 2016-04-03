@@ -298,6 +298,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // save excel file
             $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
             logit($logname, '   SAVING ' . $xlsstore . 'naka' . $invoiceid . '.xls');
+            if (!file_exists($xlsstore))
+                mkdir($xlsstore);
             $objWriter -> save($xlsstore . 'naka' . $invoiceid . '.xls');
 
             //email invoice
