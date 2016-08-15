@@ -40,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
     foreach ($_SESSION['invoices'] as $key => $value) {
-        if (key_exists('checkno' . $value, $_POST)) {
+        //        if (key_exists('checkno' . $value, $_POST)) {
+        if ($_POST['checkno' . $value] != '') {
             logit($logname, '  updataing:' . $value);
             // create a pg conection
 
