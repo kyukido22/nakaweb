@@ -215,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //write out data to excel
                 $objPHPExcel -> getActiveSheet() -> setCellValue('A' . $row, $value['first_name'] . ' ' . $value['last_name']);
                 $objPHPExcel -> getActiveSheet() -> setCellValue('B' . $row, $_POST['skip' . $value["stu_index"]]);
-                $objPHPExcel -> getActiveSheet() -> setCellValue('C' . $row, $value['srk_description']);
+                $objPHPExcel -> getActiveSheet() -> setCellValue('C' . $row, $value['newrankdesc']);
                 if (isset($_POST['nofeereason' . $value["stu_index"]])) {
                     $objPHPExcel -> getActiveSheet() -> setCellValue('D' . $row, $_POST['nofeereason' . $value["stu_index"]]);
                 } elseif ($_POST['membershipfee' . $value["stu_index"]] == 'yes') {
@@ -393,6 +393,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 //recordtestcheckbox is now being used to display the new rank
                 $studentdata[$i]['recordtestcheckbox'] = '<td>' . $ranknames[$newrankindex] . '</td>';
                 $studentdata[$i]['newsrk_index'] = $rankindexs[$newrankindex];
+                $studentdata[$i]['newrankdesc'] = $ranknames[$newrankindex];
+
 
                 logit($logname, '  their new ranks is ' . $newrankindex . ' ' . $ranknames[$newrankindex]);
 
@@ -460,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     SetupSortingSessionVals('recordtest', array('last_name', 'first_name'), $logname);
 
     // active students and their ranks
-    $theq = " select s.stu_index,first_name,last_name,srk_description,srk_seq,";
+    $theq = " select distinct s.stu_index,first_name,last_name,srk_description,srk_seq,";
     $theq .= ' \'<td><input type="checkbox" name="tested\'||s.stu_index||\'">\'||';
     $theq .= ' \'<input type="hidden" name="testcount\'||s.stu_index||\'" value="\'||tests::integer||\'"></td>\' as recordtestcheckbox,';
     $theq .= ' case when tests < 2';
