@@ -53,7 +53,7 @@ $results -> success = FALSE;
 $results -> errortext = null;
 $cancontinue = TRUE;
 
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, true);
 if (!isset($_SESSION['errormessage'])) {
     $_SESSION['errormessage'] = '';
 }

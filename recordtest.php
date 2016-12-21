@@ -30,8 +30,8 @@ if (PHP_OS == 'WINNT') {
 static $logname = 'recordtest';
 startthelog($logname, TRUE);
 
-$dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+$dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, true);
 GetTheHTMLs('EN-US', 0, $dbconnw, $logname);
 
 logit($logname, 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);

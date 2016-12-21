@@ -29,7 +29,7 @@ $results -> errortext = null;
 $cancontinue = TRUE;
 
 // create a pg conection
-$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
 
 if (key_exists('firstname', $_POST)) {
     // was called by self, so do update
@@ -66,6 +66,14 @@ if (key_exists('firstname', $_POST)) {
         }
     }
 
+    if ($_POST['thepassword']!=$_POST['thepasswordcheck'])
+    {
+        $results -> errortext = "Passwords don't match";
+        $cancontinue = FALSE;
+
+    }
+
+    if ($cancontinue){
     $params = array(':userid' => $userid, //
     ':firstname' => clean_user_input($_POST["firstname"]), //
     ':lastname' => clean_user_input($_POST["lastname"]), //
@@ -112,11 +120,10 @@ if (key_exists('firstname', $_POST)) {
     logit($logname, 'going back to school');
     header('Location: school.php');
     exit ;
-
+}
 } else {
     $userid = $_GET["userid"];
 }
-
 // display user info
 
 $theq = 'select u.userid,locked,';
@@ -132,6 +139,7 @@ if ($userid == -1) {
     logit($logname, '  user is editing their own data OR this is a super user... adding edit boxes for thepassword');
     $theq .= " login as userlogin,";
     $theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepassword') . ',';
+    $theq .= ColAsInputField('thepassword', '', '', 'required', 'password', 'userthepasswordcheck') . ',';
 } else {
     //must be a pleb editing someone elses record, dont allow password updating
     logit($logname, '  this is a pleb editing someone elses data... no edit boxes for login or thepassword');

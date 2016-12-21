@@ -22,7 +22,7 @@ if (PHP_OS == 'WINNT') {
 static $logname = 'recordpayment';
 startthelog($logname, TRUE);
 
-$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
 GetTheHTMLs('EN-US', 0, $dbconn, $logname);
 
 logit($logname, 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      * record the payment
      */
 
-    $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+    $dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
     foreach ($_SESSION['invoices'] as $key => $value) {
         //        if (key_exists('checkno' . $value, $_POST)) {
         if ($_POST['checkno' . $value] != '') {
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
 
     // get invoices
-    $dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+    $dbconnw = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
     $theq = " select fullname,invoiceid,invoicedate,paymentreceived,login,invoiceamount,";
     $theq .= " case when login is null then ";
     $theq .= '    \'<input type="text" name="checkno\'||invoiceid::text||\'">\'';

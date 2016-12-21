@@ -23,7 +23,7 @@ static $logname = 'editstudent';
 startthelog($logname, TRUE);
 logit($logname, 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, test);
 
 $results = new stdClass();
 $results -> success = FALSE;

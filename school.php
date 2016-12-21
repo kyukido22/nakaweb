@@ -21,7 +21,7 @@ if (PHP_OS == 'WINNT') {
 static $logname = 'school';
 startthelog($logname, TRUE);
 
-$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname,true);
 GetTheHTMLs('EN-US', 0, $dbconn, $logname);
 
 logit($logname, 'Client:' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
@@ -32,7 +32,7 @@ $results -> errortext = null;
 $cancontinue = TRUE;
 
 // create a pg conection
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, true);
 
 //school info
 $theq = 'select * from crosstab($$';
@@ -77,7 +77,7 @@ try {
     $cancontinue = FALSE;
 }
 
-$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $logname, true);
 // superuser info
 $theq = 'select login as userlogin,\'********\' as userthepassword,thelanguage as userthelanguage,u.userid,';
 $theq .= ' firstname as userfirstname,lastname as userlastname,email as useremail,address1 as useraddress1,';
@@ -124,7 +124,7 @@ $theq = 'select testdate,clt_description,i.invoiceid,invoicedate,invoiceamount,p
 $theq .= ' from tests t';
 $theq .= ' join invoices i on i.invoiceid=t.invoiceid';
 if (PHP_OS == 'WINNT') {
-    $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=password','";
+    $theq .= " join (select * from dblink('host=localhost dbname=mfd user=postgres password=123PASSword$%^','";
 } else {
     $theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^ port=54494','";
 }
@@ -163,7 +163,7 @@ $_SESSION['editstudentsbutton'] = '<form action="selectstudent.php"><input class
 $thehtml = LoadTheHTML('page_school', array(//
 'header_schooldetails' => $schooldata, //
 'detail_superuserdetails' => $superuserdata, //
-'detail_userdetails' => $userdata, //
+'detail_edituserdetails' => $userdata, //
 'detail_tests' => $testdata//
 ), $logname, 1, 1);
 

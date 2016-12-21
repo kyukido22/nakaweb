@@ -47,7 +47,7 @@ function updatesysdef($key, $value, $dbconn, $logname) {
 }
 
 // create a pg conection
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname);
+$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, true);
 
 if (key_exists('schoolname', $_POST)) {
     // was called by self so do update

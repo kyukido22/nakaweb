@@ -65,7 +65,7 @@ function SetSessionVals($clientuserrecord, $PDOconn, $logname) {
  * cheating) and put them in.
  */
 
-$PDOconn = PDOconnect('nakaweb', $_SESSION["dbhost"], $logname);
+$PDOconn = PDOconnect('nakaweb', $_SESSION["dbhost"], $logname, true);
 
 if (key_exists('clientid', $_GET)) {
 
