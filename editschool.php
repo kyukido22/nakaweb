@@ -2,68 +2,60 @@
 
 session_start();
 if (!isset($_SESSION["userid"])) {
-    header('Location: login.php');
-    exit ;
+	header('Location: login.php');
+	exit;
 }
 
 $starttime = microtime(TRUE);
 if (PHP_OS == 'WINNT') {
-    require 'C:\inetpub\phplib\logitv2.php';
-    require 'C:\inetpub\phplib\PDOconnectDB.php';
-    require 'C:\inetpub\phplib\cleanuserinput.php';
-    require 'C:\inetpub\phplib\wc2lib.php';
+	require_once 'C:\inetpub\phplib\ooplogit.php';
+	require_once 'C:\inetpub\phplib\oopPDOconnectDB.php';
+	require_once 'C:\inetpub\phplib\cleanuserinput.php';
+	require_once 'C:\inetpub\phplib\weblib.php';
 } else {
-    require '/var/www/phplib/logitv2.php';
-    require '/var/www/phplib/PDOconnectDB.php';
-    require '/var/www/phplib/cleanuserinput.php';
-    require '/var/www/phplib/wc2lib.php';
+	require_once '/var/www/phplib/ooplogit.php';
+	require_once '/var/www/phplib/oopPDOconnectDB.php';
+	require_once '/var/www/phplib/cleanuserinput.php';
+	require_once '/var/www/phplib/weblib.php';
 }
 
 static $logname = 'editschool';
-startthelog($logname, TRUE);
-logit($logname, 'Client:' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
+$o_logit = new ooplogit($logname, TRUE);
+
+$o_logit->logit('Client:' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
 $results = new stdClass();
-$results -> success = FALSE;
-$results -> errortext = null;
+$results->success = FALSE;
+$results->errortext = null;
 $cancontinue = TRUE;
 
-function updatesysdef($key, $value, $dbconn, $logname) {
-    try {
-        $theq = " delete from sysdef.system_defaults where sd_item=:key";
-        $pdoquery = $dbconn -> prepare($theq);
-        $pdoquery -> execute(array(":key" => $key));
+function updatesysdef($key, $value, $dbconn, $o_logit) {
+	$theq = " delete from sysdef.system_defaults where sd_item=:key";
+	$dbconn->executeIt($theq, array(":key" => $key), true);
 
-        $theq = " insert into sysdef.system_defaults (sd_value,sd_item)";
-        $theq .= " values (:value,:key)";
-        $pdoquery = $dbconn -> prepare($theq);
-        $pdoquery -> execute(array(":key" => $key, ":value" => $value));
-
-    } catch (PDOException $e) {
-        logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-        $results -> errortext = $e -> getMessage();
-        $cancontinue = FALSE;
-    }
+	$theq = " insert into sysdef.system_defaults (sd_value,sd_item)";
+	$theq .= " values (:value,:key)";
+	$dbconn->executeIt($theq, array(":key" => $key, ":value" => $value), true);
 }
 
 // create a pg conection
-$dbconn = PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $logname, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $o_logit, true);
 
 if (key_exists('schoolname', $_POST)) {
-    // was called by self so do update
-    logit($logname, 'updating school');
+	// was called by self so do update
+	$o_logit->logit('updating school');
 
-    updatesysdef("School Name", $_POST["schoolname"], $dbconn, $logname);
-    updatesysdef("School Address", $_POST["schooladdress"], $dbconn, $logname);
-    updatesysdef("School Address2", $_POST["schooladdress2"], $dbconn, $logname);
-    updatesysdef("School City", $_POST["schoolcity"], $dbconn, $logname);
-    updatesysdef("School State", $_POST["schoolstate"], $dbconn, $logname);
-    updatesysdef("School Zip", $_POST["schoolzip"], $dbconn, $logname);
-    updatesysdef("School Phone", $_POST["schoolphone"], $dbconn, $logname);
+	updatesysdef("School Name", $_POST["schoolname"], $dbconn, $o_logit);
+	updatesysdef("School Address", $_POST["schooladdress"], $dbconn, $o_logit);
+	updatesysdef("School Address2", $_POST["schooladdress2"], $dbconn, $o_logit);
+	updatesysdef("School City", $_POST["schoolcity"], $dbconn, $o_logit);
+	updatesysdef("School State", $_POST["schoolstate"], $dbconn, $o_logit);
+	updatesysdef("School Zip", $_POST["schoolzip"], $dbconn, $o_logit);
+	updatesysdef("School Phone", $_POST["schoolphone"], $dbconn, $o_logit);
 
-    logit($logname, 'going back to school');
-    header('Location: school.php');
-    exit ;
+	$o_logit->logit('going back to school');
+	header('Location: school.php');
+	exit;
 }
 
 //school info
@@ -98,16 +90,7 @@ $theq .= " schoolcity text,";
 $theq .= " schoolstate text,";
 $theq .= " schoolzip text,";
 $theq .= " schoolphone text)";
-try {
-    $pdoquery = $dbconn -> prepare($theq);
-    $pdoquery -> setFetchMode(PDO::FETCH_OBJ);
-    $pdoquery -> execute();
-    $schooldata = $pdoquery -> fetchAll();
-} catch (PDOException $e) {
-    logit($logname, '  **ERROR** on line ' . __LINE__ . ' with query - ' . $theq . ' ' . $e -> getMessage());
-    $results -> errortext = $e -> getMessage();
-    $cancontinue = FALSE;
-}
+$dbconn->fetchIt($theq, null, $schooldata, true);
 
 $_SESSION['post'] = 'method="post"';
 
@@ -116,9 +99,9 @@ $_SESSION['buttontextschool'] = ' Save ';
 $_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input class="button" type="submit" value=" Cancel " /></a>';
 $_SESSION['editstudentsbutton'] = '';
 
-$thehtml = LoadTheHTML('page_editschool', array(//
-'header_schooldetails' => $schooldata), //
-$logname, 1, 1);
+$thehtml = LoadTheHTML(null, 'page_editschool',
+	array('header_schooldetails' => $schooldata),
+	$o_logit, 1, 1);
 
 echo $thehtml;
 
