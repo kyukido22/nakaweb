@@ -57,7 +57,6 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 	$cancontinue = $dbconn->fetchIt($theq, array(
 		':login' => clean_user_input($_POST["LOGIN"]),
 		':password' => clean_user_input($_POST["PASSWORD"])), $rows, true);
-	$row = $rows[0];
 
 	if ($cancontinue) {
 		if (!$row) {
@@ -65,6 +64,7 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 			//$o_logit->logit( __LINE__);
 			$results->errortext = 'Sorry, that username/password is invalid';
 		} else {
+			$row = $rows[0];
 			// valid user/password
 			if ($row->locked == TRUE) {
 				//$o_logit->logit( __LINE__);
