@@ -103,7 +103,7 @@ if (key_exists('clientid', $_GET)) {
 			// only one tag so just put them in
 			$o_logit->logit('  user only has 1 tag value, bypassing client selection screen');
 			$_SESSION["multiaccount"] = FALSE;
-			SetSessionVals($row, $PDOconn, $logname);
+			SetSessionVals($row, $PDOconn, $o_logit);
 
 		} else {
 
