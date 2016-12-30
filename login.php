@@ -59,7 +59,7 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 		':password' => clean_user_input($_POST["PASSWORD"])), $rows, true);
 
 	if ($cancontinue) {
-		if (!$row) {
+		if ($dbconn->records == 0) {
 			// not a valid user/password
 			//$o_logit->logit( __LINE__);
 			$results->errortext = 'Sorry, that username/password is invalid';
