@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				$theq .= " and current_rank=true";
 				$theq .= " and srk_index in (select srk_index from";
 				$theq .= " sysdef.rank_names where clt_index=:artid)";
-				$cancontinue = $dbconn->executeIt($theq, array(
+				$cancontinue = $dbconn->fetchIt($theq, array(
 					':artid' => $_SESSION['artid'],
 					':stu_index' => $value["stu_index"]), $ranks, true);
 
