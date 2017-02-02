@@ -94,7 +94,7 @@ if (key_exists('LOGIN', $_POST) and key_exists('PASSWORD', $_POST)) {
 				$theq .= " where treasurer=true";
 				$theq .= "  and u.locked=false";
 				$cancontinue = $dbconn->fetchIt($theq, null, $rows, true);
-				$row = $rows[0];
+				$_SESSION["treasureremail"] = $rows[0]->email;
 
 				$results->success = TRUE;
 
