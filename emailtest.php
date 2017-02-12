@@ -21,9 +21,10 @@ $email->FromName = 'NAKA Website';
 $email->Subject = 'NAKA Invoice';
 $email->Body = 'testing email service';
 $email->AddAddress('john.cantin@gmail.com');
+$email->AddAddress('tanya.cantin@gmail.com');
+$email->AddAddress('jcantin@strategicfuse.com');
 //$email->AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
-echo '   sending email to: ' .
-	$_SESSION["useremail"] . '  ' . $_SESSION["treasureremail"] . '  john.cantin@gmail.com';
+echo '   sending email to:  john.cantin@gmail.com';
 
 if (!$email->Send()) {
 	echo '   **ERROR** EMAIL FAILED: ' . $email->ErrorInfo;
