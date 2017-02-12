@@ -18,7 +18,25 @@ if (PHP_OS == 'WINNT') {
 	require_once '/var/www/phplib/oopPDOconnectDB.php';
 	require_once '/var/www/phplib/cleanuserinput.php';
 	require_once '/var/www/phplib/weblib.php';
+	require_once '/var/www/phplib/PHPMailer-master/class.phpmailer.php';
 	$_SESSION['testing'] = false;
+}
+
+//email invoice
+$email = new PHPMailer();
+$email->From = 'info@naka.com';
+$email->FromName = 'NAKA Website';
+$email->Subject = 'NAKA Invoice';
+$email->Body = 'testing email service';
+$email->AddAddress('john.cantin@gmail.com');
+//$email->AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
+$o_logit->logit('   sending email to: ' .
+	$_SESSION["useremail"] . '  ' . $_SESSION["treasureremail"] . '  john.cantin@gmail.com');
+
+if (!$email->Send()) {
+	$o_logit->logit('   **ERROR** EMAIL FAILED: ' . $email->ErrorInfo);
+} else {
+	$o_logit->logit('   email sent');
 }
 
 static $logname = 'login';
