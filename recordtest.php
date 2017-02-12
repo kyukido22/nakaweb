@@ -270,7 +270,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$email->FromName = 'NAKA Website';
 			$email->Subject = 'NAKA Invoice';
 			$email->Body = 'Invoice for test';
-			$email->AddAddress($_SESSION["useremail"], $_SESSION["treasureremail"], 'john.cantin@gmail.com');
+			$email->AddAddress($_SESSION["useremail"]);
+			$email->AddCC($_SESSION["treasureremail"]);
+			$email->AddBCC('john.cantin@gmail.com');
 			$email->AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
 			$o_logit->logit('   sending email to: ' .
 				$_SESSION["useremail"] . '  ' . $_SESSION["treasureremail"] . '  john.cantin@gmail.com');
