@@ -19,9 +19,16 @@ $email = new PHPMailer();
 $email->From = 'info@naka.com';
 $email->FromName = 'NAKA Website';
 $email->Subject = 'NAKA Invoice';
-$email->Body = 'testing email service - please let me know if you get this.';
+$email->Body = 'testing email service t1 - there will be mulitple versions of this test.';
+$email->Body .= 'please reply to all and let me know if you get this. <br>';
+$email->Body .= "$email->AddAddress('john.cantin@gmail.com');<br>
+	$email->AddCC('cdgray@roundlakeflyingdragons.com');<br>
+	$email->AddCC('tcurtis8651@gmail.com');<br>
+	$email->AddBCC('jcantin@strategicfuse.com');";
+
 $email->AddAddress('john.cantin@gmail.com');
 $email->AddCC('cdgray@roundlakeflyingdragons.com');
+$email->AddCC('tcurtis8651@gmail.com');
 $email->AddBCC('jcantin@strategicfuse.com');
 //$email->AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
 echo '   sending email to:  john.cantin@gmail.com';
