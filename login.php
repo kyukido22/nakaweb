@@ -39,7 +39,7 @@ $_SESSION["othercssorjs"] = '';
 //wc2 control database host
 $_SESSION["dbhost"] = 'localhost';
 
-$dbconn = new PDOconnect('nakaweb', $_SESSION["dbhost"], $o_logit, true);
+$dbconn = new PDOconnect('nakaweb', $o_logit, true);
 
 GetTheHTMLs('EN-US', 0, $dbconn, $o_logit);
 

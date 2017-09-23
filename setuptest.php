@@ -8,29 +8,28 @@ if (!isset($_SESSION["userid"])) {
 
 $starttime = microtime(TRUE);
 if (PHP_OS == 'WINNT') {
-    require_once 'C:\inetpub\phplib\ooplogit.php';
-    require_once 'C:\inetpub\phplib\oopPDOconnectDB.php';
-    require_once 'C:\inetpub\phplib\cleanuserinput.php';
-    require_once 'C:\inetpub\phplib\weblib.php';
+	require_once 'C:\inetpub\phplib\ooplogit.php';
+	require_once 'C:\inetpub\phplib\oopPDOconnectDB.php';
+	require_once 'C:\inetpub\phplib\cleanuserinput.php';
+	require_once 'C:\inetpub\phplib\weblib.php';
 } else {
-    require_once '/var/www/phplib/ooplogit.php';
-    require_once '/var/www/phplib/oopPDOconnectDB.php';
-    require_once '/var/www/phplib/cleanuserinput.php';
-    require_once '/var/www/phplib/weblib.php';
+	require_once '/var/www/phplib/ooplogit.php';
+	require_once '/var/www/phplib/oopPDOconnectDB.php';
+	require_once '/var/www/phplib/cleanuserinput.php';
+	require_once '/var/www/phplib/weblib.php';
 }
 
 static $logname = 'setuptest';
 
-$o_logit=new ooplogit($logname, TRUE);
-$o_logit->logit( 'Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
+$o_logit = new ooplogit($logname, TRUE);
+$o_logit->logit('Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
 // create a pg conection
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], 
-    $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 $results = new stdClass();
-$results -> success = FALSE;
-$results -> errortext = null;
+$results->success = FALSE;
+$results->errortext = null;
 $cancontinue = TRUE;
 unset($_SESSION['testdetails']);
 
@@ -43,10 +42,10 @@ $theq .= " join sysdef.class_type ct on ct.clt_index=rn.clt_index";
 $theq .= " where current_rank=true";
 $theq .= " and student_type in ('A','ANP','APC')";
 $theq .= ' order by clt_seq';
-$cancontinue=$dbconn->fetchIt($theq,null,$rows,true);
+$cancontinue = $dbconn->fetchIt($theq, null, $rows, true);
 $_SESSION['artselection'] = '<select name="artid">';
 foreach ($rows as $key => $row) {
-	$_SESSION['artselection'] .= ' <option value="' . $row -> clt_index . '">' . $row -> clt_description . '</option>';
+	$_SESSION['artselection'] .= ' <option value="' . $row->clt_index . '">' . $row->clt_description . '</option>';
 }
 $_SESSION['artselection'] .= '</select>';
 

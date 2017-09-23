@@ -57,7 +57,7 @@ function SetSessionVals($clientuserrecord, $dbconn, $o_logit) {
  * cheating) and put them in.
  */
 
-$dbconn = new PDOconnect('nakaweb', $_SESSION["dbhost"], $o_logit, true);
+$dbconn = new PDOconnect('nakaweb', $o_logit, true);
 
 if (key_exists('clientid', $_GET)) {
 
@@ -136,12 +136,9 @@ if (key_exists('clientid', $_GET)) {
 				$_SESSION['clientdefaults']['fullname'] = 'Select a School';
 
 				$thehtml = LoadTheHTML($dbconn, 'page_clientselect',
-					array('detail_clients' => $rows), $o_logit, 1, 1);
+					array('page_clientselect_detail_clients' => $rows,
+						'page_clientselect_header_clients' => $rows), $o_logit, 1, 1);
 
-				if ($thehtml == '') {
-					$results->errortext = 'no HTML found at: ' . __LINE__;
-					$cancontinue = FALSE;
-				}
 				echo $thehtml;
 
 			}

@@ -23,16 +23,15 @@ if (PHP_OS == 'WINNT') {
 	require_once '/var/www/phplib/weblib.php';
 	require_once '/var/www/phplib/PHPExcel-1.8/Classes/PHPExcel.php';
 	require_once '/var/www/phplib/PHPMailer-master/class.phpmailer.php';
-	$xlsstore = '/tmp/invoices/';
+	$xlsstore = '/var/tmp/invoices/';
 	$images = './images/';
 }
 
 static $logname = 'recordtest';
 $o_logit = new ooplogit($logname, TRUE);
 
-$dbconnw = new PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $o_logit, true);
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"],
-	$_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconnw = new PDOconnect('nakaweb', $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 $o_logit->logit('Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
@@ -270,9 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			$email->FromName = 'NAKA Website';
 			$email->Subject = 'NAKA Invoice';
 			$email->Body = 'Invoice for test';
-			$email->AddAddress($_SESSION["useremail"]);
-			$email->AddCC($_SESSION["treasureremail"]);
-			$email->AddBCC('john.cantin@gmail.com');
+			$email->AddAddress('john.cantin@gmail.com');
 			$email->AddAttachment($xlsstore . 'naka' . $invoiceid . '.xls', $invoiceid . '.xls');
 			$o_logit->logit('   sending email to: ' .
 				$_SESSION["useremail"] . '  ' . $_SESSION["treasureremail"] . '  john.cantin@gmail.com');
@@ -409,7 +406,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$_SESSION['testdate'] = clean_user_input($_GET['testdate']);
 
 	// display check list of student's
-	SetupSortingSessionVals(array('last_name', 'first_name'), $o_logit);
+	//SetupSortingSessionVals(array('last_name', 'first_name'), $o_logit);
 
 	// active students and their ranks
 	$theq = " select distinct s.stu_index,first_name,last_name,srk_description,srk_seq,";
@@ -456,8 +453,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $_SESSION['clientdefaults']['pagetitle'] = 'Record Test';
 
-$thehtml = LoadTheHTML(null, 'page_recordtest', array( //
-	'detail_recordtest' => $studentdata), $o_logit, 1, 1);
+$thehtml = LoadTheHTML(null, 'page_recordtest', array(
+	'page_recordtest_header_recordtest' => $studentdata,
+	'page_recordtest_detail_recordtest' => $studentdata,
+), $o_logit, 1, 1);
 
 echo $thehtml;
 ?>

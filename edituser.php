@@ -24,7 +24,7 @@ if (PHP_OS == 'WINNT') {
 
 static $logname = 'edituser';
 $o_logit = new ooplogit($logname, TRUE);
-$dbconn = new PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect('nakaweb', $o_logit, true);
 
 $results = new stdClass();
 $results->success = FALSE;
@@ -146,27 +146,27 @@ $_SESSION['buttontextuser'] = ' Save ';
 
 if ($userid == -1) {
 	// new user, allow login and password to be updated
-	$thehtml = LoadTheHTML(null, 'page_edituser', array( //
-		'detail_editsuperuserdetails' => $userdata,
-		'detail_edituserdetails' => null,
-		'header_editsuperuserdetails' => $userdata,
-		'header_edituserdetails' => null), //
+	$thehtml = LoadTheHTML(null, 'page_edituser', array(
+		'page_edituser_detail_editfulluserdetails' => $userdata,
+		'page_edituser_header_editfulluserdetails' => $userdata,
+		'page_edituser_detail_edituserdetails' => null,
+		'page_edituser_header_edituserdetails' => null),
 		$o_logit, 1, 1);
 } elseif ($_SESSION['userid'] == $userid or $_SESSION["superuser"]) {
 	// user is editing his own data OR user is superuser, allow password to be updated
-	$thehtml = LoadTheHTML(null, 'page_edituser', array( //
-		'detail_editsuperuserdetails' => $userdata,
-		'detail_edituserdetails' => null,
-		'header_editsuperuserdetails' => $userdata,
-		'header_edituserdetails' => null), //
+	$thehtml = LoadTheHTML(null, 'page_edituser', array(
+		'page_edituser_detail_editfulluserdetails' => $userdata,
+		'page_edituser_header_editfulluserdetails' => $userdata,
+		'page_edituser_detail_edituserdetails' => null,
+		'page_edituser_header_edituserdetails' => null),
 		$o_logit, 1, 1);
 } else {
 	//must be a pleb editing someone elses record, dont allow password updating
-	$thehtml = LoadTheHTML(null, 'page_edituser', array( //
-		'detail_edituserdetails' => $userdata,
-		'detail_editsuperuserdetails' => null,
-		'header_edituserdetails' => $userdata,
-		'header_editsuperuserdetails' => null), //
+	$thehtml = LoadTheHTML(null, 'page_edituser', array(
+		'page_edituser_detail_edituserdetails' => $userdata,
+		'page_edituser_header_edituserdetails' => $userdata,
+		'page_edituser_detail_editfulluserdetails' => null,
+		'page_edituser_header_editfulluserdetails' => null),
 		$o_logit, 1, 1);
 }
 

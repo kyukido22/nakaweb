@@ -42,7 +42,7 @@ h3 {
 }
 
 a {
-	text-decoration: none;
+	stext-decoration: none;
 	color: #083152;
 }
 
@@ -143,6 +143,10 @@ select:focus, textarea:focus, input[type="text"]:focus, input[type="password"]:f
 .footer_links {
 	display: block;
 	padding-top: 10px;
+}
+
+.invoicelinks a {
+	color: black;
 }
 
 .links a, .footer_links a {

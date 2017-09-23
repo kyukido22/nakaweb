@@ -12,12 +12,15 @@ if (PHP_OS == 'WINNT') {
 	require_once 'C:\inetpub\phplib\oopPDOconnectDB.php';
 	require_once 'C:\inetpub\phplib\cleanuserinput.php';
 	require_once 'C:\inetpub\phplib\weblib.php';
+	$xlsstore = 'C:\inetpub\phplogs\invoices\\';
 } else {
 	require_once '/var/www/phplib/ooplogit.php';
 	require_once '/var/www/phplib/oopPDOconnectDB.php';
 	require_once '/var/www/phplib/cleanuserinput.php';
 	require_once '/var/www/phplib/weblib.php';
+	$xlsstore = '/var/tmp/invoices/';
 }
+
 static $logname = 'school';
 $o_logit = new ooplogit($logname, TRUE);
 $o_logit->logit('Client:' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
@@ -28,7 +31,7 @@ $results->errortext = null;
 $cancontinue = TRUE;
 
 // create a pg conection
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 //school info
 $theq = 'select * from crosstab($$';
@@ -63,7 +66,7 @@ $_SESSION['schoolstate'] = $schooldata[0]->schoolstate;
 $_SESSION['schoolzip'] = $schooldata[0]->schoolzip;
 $_SESSION['schoolphone'] = $schooldata[0]->schoolphone;
 
-$dbconn = new PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect('nakaweb', $o_logit, true);
 // superuser info
 $theq = 'select login as userlogin,\'********\' as userthepassword,thelanguage as userthelanguage,u.userid,';
 $theq .= ' firstname as userfirstname,lastname as userlastname,email as useremail,address1 as useraddress1,';
@@ -93,12 +96,10 @@ $dbconn->fetchIt($theq, array(':schoolid' => $_SESSION["clientdefaults"]["client
 $theq = 'select testdate,clt_description,i.invoiceid,invoicedate,invoiceamount,paymentreceived,login';
 $theq .= ' from tests t';
 $theq .= ' join invoices i on i.invoiceid=t.invoiceid';
-if (PHP_OS == 'WINNT') {
-	$theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^','";
-} else {
-	$theq .= " join (select * from dblink('host=localhost dbname=winmam1 user=postgres password=123PASSword$%^ port=54494','";
-}
-
+$theq .= " join (select * from dblink('" .
+str_replace(';', '', $ini_array['connections'][$_SESSION["clientdefaults"]["dbname"]]) .
+	' password=' . $ini_array['general']['password'] .
+	' user=' . $ini_array['general']['user'] . "','";
 $theq .= " 		select clt_index, clt_seq, short_name, clt_description from sysdef.class_type') as (";
 $theq .= " 		clt_index integer,";
 $theq .= " 		clt_seq integer,";
@@ -109,6 +110,16 @@ $theq .= ' where t.schoolid=:schoolid';
 $theq .= ' order by testdate desc, i.invoiceid desc';
 $dbconn->fetchIt($theq, array(':schoolid' => $_SESSION["clientdefaults"]["clientid"]),
 	$testdata, true);
+
+foreach ($testdata as $key => $value) {
+	if (file_exists($xlsstore . 'naka' . $value->invoiceid . '.xls')) {
+		$value->invoicelink = '<a class="invoicelinks" href="invoicedownload.php?file=' .
+		base64_encode('naka' . $value->invoiceid . '.xls') .
+		'">' . $value->invoiceid . '</a>';
+	} else {
+		$value->invoicelink = $value->invoiceid;
+	}
+}
 
 if ($_SESSION['superuser'] == true) {
 	$_SESSION['createnewuserbutton'] = '<form action="edituser.php">' . //
@@ -124,10 +135,16 @@ $_SESSION['cancelbutton'] = '';
 $_SESSION['editstudentsbutton'] = '<form action="selectstudent.php"><input class="button" type="submit" value=" Students " /></form>';
 
 $thehtml = LoadTheHTML($dbconn, 'page_school', array(
-	'header_schooldetails' => $schooldata,
-	'detail_viewsuperuserdetails' => $superuserdata,
-	'detail_viewuserdetails' => $userdata,
-	'detail_tests' => $testdata,
+	'shared_header_schooldetails' => $schooldata,
+
+	'shared_header_superuserdetails' => $superuserdata,
+	'shared_detail_superuserdetails' => $superuserdata,
+
+	'shared_header_userdetails' => $userdata,
+	'shared_detail_userdetails' => $userdata,
+
+	'page_school_detail_tests' => $testdata,
+	'page_school_header_tests' => $testdata,
 ), $o_logit, 1, 1);
 
 echo $thehtml;

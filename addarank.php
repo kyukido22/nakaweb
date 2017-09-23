@@ -47,8 +47,7 @@ function CreateLimitedArtCB($pdoconn, $logname, $stu_index) {
 	return ($res);
 }
 
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"],
-	$_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 $results = new stdClass();
 $results->success = FALSE;
@@ -103,7 +102,7 @@ if (key_exists('dlStudent', $_GET)) {
 	$_SESSION['buttoneditstudent'] = '';
 	$_SESSION['clientdefaults']['pagetitle'] = 'Add a Rank';
 	$thehtml = LoadTheHTML(null, 'page_addarank',
-		array('detail_ranks' => $studentranks,
+		array('shared_detail_ranks' => $studentranks,
 			'shared_student' => $studentdata), $o_logit, 1, 1);
 
 	echo $thehtml;

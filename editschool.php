@@ -39,7 +39,7 @@ function updatesysdef($key, $value, $dbconn, $o_logit) {
 }
 
 // create a pg conection
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 if (key_exists('schoolname', $_POST)) {
 	// was called by self so do update
@@ -100,7 +100,7 @@ $_SESSION['cancelbutton'] = '&nbsp;&nbsp;<a href="school.php"><input class="butt
 $_SESSION['editstudentsbutton'] = '';
 
 $thehtml = LoadTheHTML(null, 'page_editschool',
-	array('header_schooldetails' => $schooldata),
+	array('shared_header_schooldetails' => $schooldata),
 	$o_logit, 1, 1);
 
 echo $thehtml;

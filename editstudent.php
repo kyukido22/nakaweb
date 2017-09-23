@@ -23,8 +23,7 @@ static $logname = 'editstudent';
 $o_logit = new ooplogit($logname, TRUE);
 $o_logit->logit('Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"],
-	$_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 $results = new stdClass();
 $results->success = FALSE;
@@ -211,13 +210,13 @@ if (key_exists('dlStudent', $_GET)) {
 		'shared_student' => $studentdata, //
 		'shared_parents' => $studentdata, //
 		'shared_contact' => $studentdata, //
-		'detail_ranks' => $studentranks, //
-		'header_contractsa' => $contractsa, //
-		'detail_contractsa' => $contractsa, //
-		'header_contractsi' => $contractsi, //
-		'detail_contractsi' => $contractsi, //
-		'detail_medicalalert' => $medalert, //
-		'detail_notes' => $notes, //
+		'shared_detail_ranks' => $studentranks, //
+		'page_main_header_contractsa' => $contractsa, //
+		'page_main_detail_contractsa' => $contractsa, //
+		'page_main_header_contractsi' => $contractsi, //
+		'page_main_detail_contractsi' => $contractsi, //
+		'page_main_detail_medicalalert' => $medalert, //
+		'page_main_detail_notes' => $notes, //
 	), $o_logit, 1, 1);
 
 	echo $thehtml;

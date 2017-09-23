@@ -28,7 +28,7 @@ $results->success = FALSE;
 $results->errortext = null;
 $cancontinue = TRUE;
 
-$dbconn = new PDOconnect('nakaweb', $_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect('nakaweb', $o_logit, true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -81,7 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $_SESSION['clientdefaults']['pagetitle'] = 'Record Invoice Payments';
 
 $thehtml = LoadTheHTML(null, 'page_recordpayment', array( //
-	'detail_invoices' => $invoices), $o_logit, 1, 1);
+	'page_recordpayment_detail_invoices' => $invoices,
+	'page_recordpayment_header_invoices' => $invoices,
+), $o_logit, 1, 1);
 
 echo $thehtml;
 ?>

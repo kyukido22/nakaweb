@@ -24,8 +24,7 @@ $o_logit = new ooplogit($logname, TRUE);
 $o_logit->logit('Client:"' . $_SESSION["clientdefaults"]["dbname"] . ' user:' . $_SESSION["userlogin"]);
 
 // create a pg conection
-$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"],
-	$_SESSION["clientdefaults"]["host"], $o_logit, true);
+$dbconn = new PDOconnect($_SESSION["clientdefaults"]["dbname"], $o_logit, true);
 
 $results = new stdClass();
 $results->success = FALSE;
@@ -99,13 +98,16 @@ $thehtml = LoadTheHTML(null, 'page_main', array( //
 	'shared_student' => $studentdata, //
 	'shared_parents' => $studentdata, //
 	'shared_contact' => $studentdata, //
-	'detail_ranks' => $rankdata, //
-	'header_contractsa' => $activedata, //
-	'detail_contractsa' => $activedata, //
-	'header_contractsi' => $inactivedata, //
-	'detail_contractsi' => $inactivedata, //
-	'detail_medicalalert' => $meddata, //
-	'detail_notes' => $notedata, //
+	'shared_detail_ranks' => $rankdata, //
+	'shared_header_ranks' => $rankdata, //
+	'page_main_header_contractsa' => $activedata, //
+	'page_main_detail_contractsa' => $activedata, //
+	'page_main_header_contractsi' => $inactivedata, //
+	'page_main_detail_contractsi' => $inactivedata, //
+	'page_main_header_medicalalert' => $meddata, //
+	'page_main_detail_medicalalert' => $meddata, //
+	'page_main_header_notes' => $notedata, //
+	'page_main_detail_notes' => $notedata, //
 ), $o_logit, 1, 1);
 
 echo $thehtml;
